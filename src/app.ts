@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import delay from "./routes/delay.js";
 import status from "./routes/status.js";
+import schema from "./routes/schemas.js";
 
 const app = express();
 const port = 3000;
@@ -12,10 +13,11 @@ app.use(
     optionsSuccessStatus: 200,
   }),
 );
+app.use(express.json());
 
 app.use("/api/delay", delay);
-
 app.use("/api/status", status);
+app.use("/api/schema", schema);
 
 app.get("/", (req, res) => {
   res.json("Health Check Complete");
