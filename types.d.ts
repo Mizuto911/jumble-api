@@ -10,7 +10,7 @@ type SchemaElementType = "string" | "number" | "boolean" | "date";
 type SchemaElement =
   | {
       type: SchemaElementType | SchemaElementType[] | "*";
-      sampleResponse?: any | any[] | undefined;
+      sampleResponse?: Array<string> | null;
       contentType?:
         | "longText"
         | "name"
@@ -22,10 +22,11 @@ type SchemaElement =
         | "address"
         | "price"
         | "currency"
-        | "uuid";
+        | "uuid"
+        | null;
     }
   | SchemaElementType;
 
 type Schema = {
-  [key: string]: SchemaElement;
+  [key: string]: SchemaElement | Schema;
 };
