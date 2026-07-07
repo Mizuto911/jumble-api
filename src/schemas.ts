@@ -74,6 +74,11 @@ const SchemaModel: JSONSchemaType<Schema> = {
           },
         },
       },
+      {
+        type: "object",
+        required: [],
+        $ref: "#",
+      },
     ],
   },
 };
