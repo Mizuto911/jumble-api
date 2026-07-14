@@ -1,4 +1,5 @@
 import express from "express";
+import generateOutputFromSchema from "../SchemaOutput.js";
 import validateSchema from "../validator.js";
 const router = express.Router();
 
@@ -17,6 +18,19 @@ router.post("/", (req, res) => {
     });
   }
   res.status(201).json({ success: true, data: schema });
+});
+
+router.get("/test", (req, res) => {
+  const schema: Schema = {
+    name: "string",
+    age: "number",
+    info: {
+      birthday: "string",
+      details: "string",
+    },
+  };
+
+  res.status(200).json(generateOutputFromSchema(schema));
 });
 
 export default router;
