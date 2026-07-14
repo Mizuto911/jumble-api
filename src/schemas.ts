@@ -12,9 +12,9 @@ const SchemaModel: JSONSchemaType<Schema> = {
       },
       {
         type: "object",
-        required: ["type"],
+        required: ["_type"],
         properties: {
-          type: {
+          _type: {
             type: ["string", "array"],
             oneOf: [
               {
@@ -53,7 +53,9 @@ const SchemaModel: JSONSchemaType<Schema> = {
                 type: "string",
                 enum: [
                   "longText",
-                  "name",
+                  "fullname",
+                  "firstname",
+                  "lastname",
                   "email",
                   "phone",
                   "age",

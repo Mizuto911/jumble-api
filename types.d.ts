@@ -9,11 +9,13 @@ type SchemaElementType = "string" | "number" | "boolean" | "date";
 
 type SchemaElement =
   | {
-      type: SchemaElementType | SchemaElementType[] | "*";
+      _type: SchemaElementType | SchemaElementType[] | "*";
       sampleResponse?: Array<string> | null;
       contentType?:
         | "longText"
-        | "name"
+        | "fullname"
+        | "firstname"
+        | "lastname"
         | "email"
         | "phone"
         | "age"
@@ -29,4 +31,8 @@ type SchemaElement =
 
 type Schema = {
   [key: string]: SchemaElement | Schema;
+};
+
+type SchemaOutput = {
+  [key: string]: any;
 };
