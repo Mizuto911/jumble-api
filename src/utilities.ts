@@ -18,3 +18,11 @@ export function isValidStatusCode(status: string) {
 export function generateRandomAmount(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+export function getRandomArrayElement(array: Array<any>) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+export function getRandomTrueOrFalse() {
+  return [true, false][Math.round(Math.random())];
+}
