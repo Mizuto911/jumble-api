@@ -26,7 +26,6 @@ const SchemaModel: AnySchema = {
         {
           type: "string",
           enum: [
-            "lorem",
             "sex",
             "fullname",
             "firstname",
@@ -75,7 +74,7 @@ const SchemaModel: AnySchema = {
     },
     SchemaElementFormat: {
       type: "object",
-      required: ["format"],
+      required: [],
       properties: {
         array: { $ref: "#/definitions/ArrayLength" },
         format: {

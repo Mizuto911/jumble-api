@@ -8,7 +8,6 @@ type delayQuery = {
 type PrimaryTypes = "string" | "number" | "boolean" | "date";
 
 type MockTypes =
-  | "lorem"
   | "sex"
   | "fullname"
   | "firstname"
@@ -38,7 +37,7 @@ type ArrayLength =
 
 type SchemaElementFormat = {
   array?: ArrayLength;
-  format: PrimaryTypes | MockTypes;
+  format?: PrimaryTypes | MockTypes;
   pickFrom?: PickFrom | null;
   min?: number | null;
   max?: number | null;
