@@ -1,87 +1,108 @@
-import type { JSONSchemaType } from "ajv";
+import type { AnySchema } from "ajv";
 
-const SchemaModel: JSONSchemaType<Schema> = {
-  type: "object",
-  required: [],
-  additionalProperties: {
-    type: ["string", "object"],
-    oneOf: [
-      {
-        type: "string",
-        enum: ["string", "number", "boolean", "date"],
+const SchemaModel: AnySchema = {
+  $schema: "http://json-schema.org/draft-07/schema#",
+  $id: "https://example.com/schema-element.json",
+  title: "Schema",
+  anyOf: [
+    { $ref: "#/definitions/SchemaProperties" },
+    {
+      type: "object",
+      required: ["properties"],
+      properties: {
+        array: { $ref: "#/definitions/ArrayLength" },
+        properties: { $ref: "#/definitions/SchemaProperties" },
       },
-      {
-        type: "object",
-        required: ["_type"],
-        properties: {
-          _type: {
-            type: ["string", "array"],
-            oneOf: [
-              {
-                type: "string",
-                enum: ["string", "number", "boolean", "date", "*"],
-              },
-              {
-                type: "array",
-                items: {
-                  type: "string",
-                  enum: ["string", "number", "boolean", "date"],
-                },
-              },
-            ],
-          },
-          sampleResponse: {
-            type: ["array", "null"],
-            oneOf: [
-              {
-                type: "array",
-                items: {
-                  type: "string",
-                },
-              },
-              {
-                type: "null",
-                nullable: true,
-              },
-            ],
-            nullable: true,
-          },
-          contentType: {
-            type: ["string", "null"],
-            oneOf: [
-              {
-                type: "string",
-                enum: [
-                  "longText",
-                  "fullname",
-                  "firstname",
-                  "lastname",
-                  "email",
-                  "phone",
-                  "age",
-                  "url",
-                  "imageUrl",
-                  "address",
-                  "price",
-                  "currency",
-                  "uuid",
-                ],
-              },
-              {
-                type: "null",
-                nullable: true,
-              },
-            ],
-            nullable: true,
+      additionalProperties: false,
+    },
+  ],
+  definitions: {
+    PrimaryTypes: {
+      type: "string",
+      enum: ["string", "number", "boolean", "date"],
+    },
+    MockTypes: {
+      anyOf: [
+        {
+          type: "string",
+          enum: [
+            "lorem",
+            "sex",
+            "fullname",
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+            "url",
+            "imageUrl",
+            "avatarUrl",
+            "countryCode",
+            "address",
+            "color",
+            "zipcode",
+            "currency",
+            "uuid",
+          ],
+        },
+        { type: "null" },
+      ],
+    },
+    PickFrom: {
+      anyOf: [
+        {
+          type: "array",
+          items: {
+            type: ["string", "number", "boolean"],
           },
         },
+        { type: "null" },
+      ],
+    },
+    ArrayLength: {
+      anyOf: [
+        { type: "number" },
+        {
+          type: "object",
+          required: ["min", "max"],
+          properties: {
+            min: { type: "number" },
+            max: { type: "number" },
+          },
+          additionalProperties: false,
+        },
+        { type: "null" },
+      ],
+    },
+    SchemaElementFormat: {
+      type: "object",
+      required: ["format"],
+      properties: {
+        array: { $ref: "#/definitions/ArrayLength" },
+        format: {
+          anyOf: [
+            { $ref: "#/definitions/PrimaryTypes" },
+            { $ref: "#/definitions/MockTypes" },
+          ],
+        },
+        pickFrom: { $ref: "#/definitions/PickFrom" },
+        min: { type: ["number", "null"] },
+        max: { type: ["number", "null"] },
       },
-      {
-        type: "object",
-        required: [],
-        $ref: "#",
+      additionalProperties: false,
+    },
+    SchemaElement: {
+      anyOf: [
+        { $ref: "#/definitions/PrimaryTypes" },
+        { $ref: "#/definitions/MockTypes" },
+        { $ref: "#/definitions/SchemaElementFormat" },
+      ],
+    },
+    SchemaProperties: {
+      type: "object",
+      additionalProperties: {
+        anyOf: [{ $ref: "#/definitions/SchemaElement" }, { $ref: "#" }],
       },
-    ],
+    },
   },
 };
 

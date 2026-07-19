@@ -5,33 +5,57 @@ type delayQuery = {
   units?: Units | undefined;
 };
 
-type SchemaElementType = "string" | "number" | "boolean" | "date";
+type PrimaryTypes = "string" | "number" | "boolean" | "date";
 
-type SchemaElement =
+type MockTypes =
+  | "lorem"
+  | "sex"
+  | "fullname"
+  | "firstname"
+  | "lastname"
+  | "email"
+  | "phone"
+  | "url"
+  | "imageUrl"
+  | "avatarUrl"
+  | "countryCode"
+  | "address"
+  | "color"
+  | "zipcode"
+  | "currency"
+  | "uuid"
+  | null;
+
+type PickFrom = Array<string | number | boolean> | null;
+
+type ArrayLength =
+  | number
   | {
-      _type: SchemaElementType | SchemaElementType[] | "*";
-      sampleResponse?: Array<string> | null;
-      contentType?:
-        | "longText"
-        | "fullname"
-        | "firstname"
-        | "lastname"
-        | "email"
-        | "phone"
-        | "age"
-        | "url"
-        | "imageUrl"
-        | "address"
-        | "price"
-        | "currency"
-        | "uuid"
-        | null;
+      min: number;
+      max: number;
     }
-  | SchemaElementType;
+  | null;
 
-type Schema = {
+type SchemaElementFormat = {
+  array?: ArrayLength;
+  format: PrimaryTypes | MockTypes;
+  pickFrom?: PickFrom | null;
+  min?: number | null;
+  max?: number | null;
+};
+
+type SchemaElement = PrimaryTypes | MockTypes | SchemaElementFormat;
+
+type SchemaProperties = {
   [key: string]: SchemaElement | Schema;
 };
+
+type Schema =
+  | SchemaProperties
+  | {
+      array?: ArrayLength | null;
+      properties: SchemaProperties;
+    };
 
 type SchemaOutput = {
   [key: string]: any;

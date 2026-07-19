@@ -22,11 +22,14 @@ router.post("/", (req, res) => {
 
 router.get("/test", (req, res) => {
   const schema: Schema = {
-    name: "string",
+    name: {
+      _type: "string",
+      contentType: "fullname",
+    },
     age: "number",
     info: {
-      birthday: "string",
-      details: "string",
+      birthday: "date",
+      isMale: "boolean",
     },
   };
 
