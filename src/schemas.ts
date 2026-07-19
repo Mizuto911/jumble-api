@@ -2,7 +2,7 @@ import type { AnySchema } from "ajv";
 
 const SchemaModel: AnySchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
-  $id: "https://example.com/schema-element.json",
+  $id: "https://jumble-api.internal/schema-definition.json",
   title: "Schema",
   anyOf: [
     { $ref: "#/definitions/SchemaProperties" },

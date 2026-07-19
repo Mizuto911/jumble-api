@@ -53,7 +53,7 @@ type SchemaProperties = {
 type Schema =
   | SchemaProperties
   | {
-      array?: ArrayLength | null;
+      array?: ArrayLength;
       properties: SchemaProperties;
     };
 

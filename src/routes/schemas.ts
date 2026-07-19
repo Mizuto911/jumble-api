@@ -26,10 +26,22 @@ router.get("/test", (req, res) => {
       _type: "string",
       contentType: "fullname",
     },
-    age: "number",
+    age: {
+      format: "number",
+      min: 10,
+      max: 100,
+    },
     info: {
-      birthday: "date",
-      isMale: "boolean",
+      properties: {
+        birthday: "date",
+        isMale: {
+          array: 5,
+          properties: {
+            male: "boolean",
+            female: "boolean",
+          },
+        },
+      },
     },
   };
 
