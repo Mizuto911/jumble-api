@@ -22,24 +22,24 @@ router.post("/", (req, res) => {
 
 router.get("/test", (req, res) => {
   const schema: Schema = {
-    name: {
-      _type: "string",
-      contentType: "fullname",
-    },
-    age: {
-      format: "number",
-      min: 10,
-      max: 100,
-    },
-    info: {
-      properties: {
-        birthday: "date",
-        isMale: {
-          array: 5,
-          properties: {
-            male: "boolean",
-            female: "boolean",
+    properties: {
+      name: "fullname",
+      age: {
+        format: "number",
+        min: 0,
+        max: 100,
+      },
+      sex: "sex",
+      friends: {
+        array: 3,
+        properties: {
+          name: "fullname",
+          age: {
+            format: "number",
+            min: 0,
+            max: 100,
           },
+          sex: "sex",
         },
       },
     },
