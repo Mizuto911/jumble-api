@@ -1,5 +1,5 @@
-import { faker } from "@faker-js/faker";
 import { generateRandomAmount } from "./utilities.js";
+import generateDataFromSchemaElement from "./datagen.js";
 
 export default function generateOutputFromSchema(schema: Schema) {
   let output: SchemaOutput = {};
@@ -25,10 +25,6 @@ function isSchemaElement(schemaElement: SchemaElement) {
   return !(schemaElement as SchemaProperties).properties;
 }
 
-function isSchemaFormat(schemaElement: SchemaElement) {
-  return !!(schemaElement as SchemaElementFormat).format;
-}
-
 function generateOutput(
   schema: Schema,
   output: SchemaOutput,
@@ -44,11 +40,7 @@ function generateOutput(
     (schema.properties as SchemaProperties) ?? schema,
   )) {
     if (isSchemaElement(value as SchemaElement)) {
-      if (isSchemaFormat(value as SchemaElement)) {
-        outputRef[key] = "AdvancedData";
-      } else {
-        outputRef[key] = "BasicData";
-      }
+      outputRef[key] = generateDataFromSchemaElement(value as SchemaElement);
     } else {
       outputRef[key] = generateOutputFromSchema(
         ((schema.properties as SchemaProperties) ?? schema)[key] as Schema,
