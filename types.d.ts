@@ -17,6 +17,7 @@ type MockTypes =
   | "url"
   | "imageUrl"
   | "avatarUrl"
+  | "portrait"
   | "countryCode"
   | "address"
   | "color"

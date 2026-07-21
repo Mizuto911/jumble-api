@@ -35,6 +35,7 @@ const SchemaModel: AnySchema = {
             "url",
             "imageUrl",
             "avatarUrl",
+            "portrait",
             "countryCode",
             "address",
             "color",
