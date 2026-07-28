@@ -10,8 +10,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "jumble-api": "node ./dist/app.js"
+    "run-jumble-api": "./dist/app.js"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
