@@ -115,5 +115,5 @@ export const defaultSchema: Schema = {
   sex: "sex",
   email: "email",
   phone: "phone",
-  profilePicture: "avatarUrl",
+  profilePic: "avatarUrl",
 };
