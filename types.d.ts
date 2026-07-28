@@ -57,6 +57,17 @@ type Schema =
       properties: SchemaProperties;
     };
 
+type SchemaCollection = {
+  [key: string]: Schema;
+};
+
 type SchemaOutput = {
   [key: string]: any;
 };
+
+type SchemaCreateRequest = {
+  schemaID: string;
+  schema: Schema;
+};
+
+type SchemaUpdateRequest = SchemaCreateRequest;

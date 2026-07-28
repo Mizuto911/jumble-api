@@ -1,18 +1,60 @@
 import express from "express";
-import { isValidStatusCode } from "../utilities.js";
+import { isValidStatusCode, schemaIDExist } from "../utilities.js";
+import validateSchema from "../validator.js";
+import { defaultSchema } from "../schemas.js";
+import generateOutputFromSchema from "../SchemaOutput.js";
+import { schemasCollection } from "../app.js";
 
 const router = express.Router();
 
 router.get("/:status", (req, res) => {
-  const status: string | undefined = req.params.status;
+  const status = req.params.status;
+  const schemaID = req.query.schemaID;
   if (!isValidStatusCode(status)) {
     return res
       .status(400)
       .json({ success: false, msg: `Status code ${status} is invalid.` });
   }
-  return res
-    .status(Number(status))
-    .json({ success: true, data: { msg: "This is success!" } });
+
+  if (schemaID && !schemaIDExist(schemaID as string)) {
+    return res.status(404).json({
+      success: false,
+      msg: `Schema with id "${schemaID}" does not exist.`,
+    });
+  }
+
+  const schema =
+    schemaID && schemasCollection
+      ? schemasCollection[schemaID as string]
+      : undefined;
+
+  return res.status(Number(status)).json({
+    success: true,
+    data: generateOutputFromSchema(schema ?? defaultSchema),
+  });
+});
+
+router.post("/:status", (req, res) => {
+  const schema = req.body;
+
+  if (!validateSchema(schema)) {
+    return res.status(400).json({
+      success: false,
+      msg: "Schema provided is not a valid schema format.",
+    });
+  }
+
+  const status = req.params.status;
+  if (!isValidStatusCode(status)) {
+    return res
+      .status(400)
+      .json({ success: false, msg: `Status code ${status} is invalid.` });
+  }
+
+  return res.status(Number(status)).json({
+    success: true,
+    data: generateOutputFromSchema(schema ?? defaultSchema),
+  });
 });
 
 export default router;

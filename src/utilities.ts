@@ -1,4 +1,5 @@
 import { STATUS_CODES } from "node:http";
+import { schemasCollection } from "./app.js";
 
 export function convertDelayValueToMS(value: number, units: Units) {
   const conversionRates: Record<Units, number> = {
@@ -25,4 +26,8 @@ export function getRandomArrayElement(array: Array<any>) {
 
 export function getRandomTrueOrFalse() {
   return [true, false][Math.round(Math.random())];
+}
+
+export function schemaIDExist(id: string | undefined) {
+  return id ? (schemasCollection ? !!schemasCollection[id] : false) : false;
 }

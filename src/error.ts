@@ -24,3 +24,19 @@ export class NullPickFromArrayError extends Error {
     Object.setPrototypeOf(this, NullPickFromArrayError.prototype);
   }
 }
+
+export class SchemaDirNotExistError extends Error {
+  constructor(
+    message: string = "The directory for schema declaration of the user doesn't exist.",
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, SchemaDirNotExistError.prototype);
+  }
+}
+
+export class MalformedSchemaError extends Error {
+  constructor(message: string = "The schema has malformed format.") {
+    super(message);
+    Object.setPrototypeOf(this, SchemaDirNotExistError.prototype);
+  }
+}

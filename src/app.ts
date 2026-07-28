@@ -1,32 +1,50 @@
-import express from "express";
-import cors from "cors";
-import delay from "./routes/delay.js";
-import status from "./routes/status.js";
-import schema from "./routes/schemas.js";
+#!/usr/bin/env node
 
-const app = express();
-const port = 3000;
+import { parseArgs } from "node:util";
+import { SchemaDirNotExistError, MalformedSchemaError } from "./error.js";
+import validateSchema from "./validator.js";
+import startApp from "./starter.js";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+import { existsSync } from "node:fs";
 
-app.use(
-  cors({
-    origin: `http://localhost:${port}`,
-    optionsSuccessStatus: 200,
-  }),
-);
-app.use(express.json());
+export let schemasCollection: SchemaCollection = {};
 
-app.use("/api/delay", delay);
-app.use("/api/status", status);
-app.use("/api/schema", schema);
+const options = {
+  port: {
+    type: "string",
+    short: "p",
+    default: "3000",
+  },
+  schema: {
+    type: "string",
+    short: "s",
+  },
+} as const;
 
-app.get("/", (req, res) => {
-  res.json("Health Check Complete");
-});
+const { values } = parseArgs({ options });
+const port = parseInt(values.port ?? "3000", 10);
+const schemaDir = values.schema;
 
-app.use((req, res, next) => {
-  res.send("<h1>Status 404: Endpoint Not Found</h1>");
-});
+if (schemaDir) {
+  const schemasPath = path.join(process.cwd(), schemaDir);
+  const filePath = pathToFileURL(schemasPath).href;
 
-app.listen(3000, () => {
-  console.log(`Jumble API is listening to port ${port}...`);
-});
+  if (!existsSync(schemasPath)) throw new SchemaDirNotExistError();
+
+  const { default: schemas } = await import(filePath);
+
+  if (!schemas) throw new SchemaDirNotExistError();
+
+  for (const [key, value] of Object.entries(schemas)) {
+    if (!validateSchema(value)) {
+      throw new MalformedSchemaError(
+        `Schema with id "${key}" has malformed format.`,
+      );
+    }
+  }
+
+  schemasCollection = { ...schemas };
+}
+
+startApp(port);
