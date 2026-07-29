@@ -3,6 +3,7 @@ import cors from "cors";
 import delay from "./routes/delay.js";
 import status from "./routes/status.js";
 import schema from "./routes/schemas.js";
+import jumble from "./routes/jumble.js";
 
 const app = express();
 
@@ -18,6 +19,7 @@ export default function startApp(port: number) {
   app.use("/api/delay", delay);
   app.use("/api/status", status);
   app.use("/api/schema", schema);
+  app.use("/api/jumble", jumble);
 
   app.get("/", (req, res) => {
     res.json("Health Check Complete");
