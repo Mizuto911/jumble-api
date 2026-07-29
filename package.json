@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "tsx watch src/app.ts",
+    "dev": "tsx watch src/app.ts --schema schemas.js",
     "build": "tsc",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
