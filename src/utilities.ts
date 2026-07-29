@@ -16,6 +16,11 @@ export function isValidStatusCode(status: string) {
   return Object.keys(STATUS_CODES).includes(status);
 }
 
+export function getRandomStatusCode() {
+  const statusKeys = Object.keys(STATUS_CODES);
+  return Number(getRandomArrayElement(statusKeys));
+}
+
 export function generateRandomAmount(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

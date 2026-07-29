@@ -1,11 +1,36 @@
 import express from "express";
-import { isValidStatusCode, schemaIDExist } from "../utilities.js";
+import {
+  isValidStatusCode,
+  schemaIDExist,
+  getRandomStatusCode,
+} from "../utilities.js";
 import validateSchema from "../validator.js";
 import { defaultSchema } from "../schemas.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
 import { schemasCollection } from "../app.js";
 
 const router = express.Router();
+
+router.get("/random", (req, res) => {
+  const schemaID = req.query.schemaID;
+
+  if (schemaID && !schemaIDExist(schemaID as string)) {
+    return res.status(404).json({
+      success: false,
+      msg: `Schema with id "${schemaID}" does not exist.`,
+    });
+  }
+
+  const schema =
+    schemaID && schemasCollection
+      ? schemasCollection[schemaID as string]
+      : undefined;
+
+  return res.status(getRandomStatusCode()).json({
+    success: true,
+    data: generateOutputFromSchema(schema ?? defaultSchema),
+  });
+});
 
 router.get("/:status", (req, res) => {
   const status = req.params.status;
@@ -29,6 +54,22 @@ router.get("/:status", (req, res) => {
       : undefined;
 
   return res.status(Number(status)).json({
+    success: true,
+    data: generateOutputFromSchema(schema ?? defaultSchema),
+  });
+});
+
+router.post("/random", (req, res) => {
+  const schema = req.body;
+
+  if (!validateSchema(schema)) {
+    return res.status(400).json({
+      success: false,
+      msg: "Schema provided is not a valid schema format.",
+    });
+  }
+
+  return res.status(getRandomStatusCode()).json({
     success: true,
     data: generateOutputFromSchema(schema ?? defaultSchema),
   });
