@@ -1,8 +1,23 @@
 type Units = "ms" | "us" | "ns" | "s";
+type QueryBool = "0" | "1";
 
 type delayQuery = {
   value?: number | undefined;
   units?: Units | undefined;
+};
+
+type OptionQuery = {
+  missing?: QueryBool;
+  wrongType?: QueryBool;
+  malformed?: QueryBool;
+  probability?: number;
+};
+
+type Options = {
+  missing?: boolean;
+  wrongType?: boolean;
+  malformed?: boolean;
+  probability?: boolean;
 };
 
 type PrimaryTypes = "string" | "number" | "boolean" | "date";

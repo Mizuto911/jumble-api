@@ -21,6 +21,24 @@ export function getRandomStatusCode() {
   return Number(getRandomArrayElement(statusKeys));
 }
 
+export function validateOptionQuery(option: OptionQuery) {
+  const probability = Number(option.probability);
+  if (
+    option.probability &&
+    (Number.isNaN(probability) || probability > 1 || probability < 0)
+  )
+    return false;
+
+  const isValid = (option: string | undefined) =>
+    option === undefined || option === "0" || option === "1";
+
+  if (!isValid(option.missing)) return false;
+  if (!isValid(option.wrongType)) return false;
+  if (!isValid(option.malformed)) return false;
+
+  return true;
+}
+
 export function generateRandomAmount(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

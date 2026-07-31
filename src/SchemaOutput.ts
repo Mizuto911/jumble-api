@@ -1,7 +1,10 @@
 import { generateRandomAmount } from "./utilities.js";
 import generateDataFromSchemaElement from "./datagen.js";
 
-export default function generateOutputFromSchema(schema: Schema) {
+export default function generateOutputFromSchema(
+  schema: Schema,
+  options?: Options,
+) {
   let output: SchemaOutput = {};
   const arrayLength = schema.array as ArrayLength;
 
