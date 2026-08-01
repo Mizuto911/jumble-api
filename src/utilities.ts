@@ -39,6 +39,17 @@ export function validateOptionQuery(option: OptionQuery) {
   return true;
 }
 
+export function getMalformedKey(key: string) {
+  const malformedKey = key.split("");
+  malformedKey[generateRandomAmount(0, key.length - 1)] = getRandomLetter();
+  return malformedKey.join("");
+}
+
+function getRandomLetter() {
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  return letters.charAt(Math.floor(Math.random() * letters.length));
+}
+
 export function generateRandomAmount(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

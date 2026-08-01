@@ -14,10 +14,10 @@ type OptionQuery = {
 };
 
 type Options = {
-  missing?: boolean;
-  wrongType?: boolean;
-  malformed?: boolean;
-  probability?: boolean;
+  missing: boolean;
+  wrongType: boolean;
+  malformed: boolean;
+  probability: number;
 };
 
 type PrimaryTypes = "string" | "number" | "boolean" | "date";

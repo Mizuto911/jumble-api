@@ -10,10 +10,21 @@ import {
 } from "./error.js";
 import { faker } from "@faker-js/faker";
 
+// TODO: Refactor Redundant Functions
+
 export default function generateDataFromSchemaElement(
   schemaElement: SchemaElement,
+  wrongType?: boolean,
 ) {
   if (!schemaElement) throw new NullSchemaElementError();
+  if (wrongType)
+    return generateWrongType(
+      typeof schemaElement === "object" && schemaElement.format
+        ? schemaElement.format
+        : typeof schemaElement === "string"
+          ? schemaElement
+          : undefined,
+    );
 
   let data;
   let arrayLength: ArrayLength;
@@ -121,4 +132,16 @@ function generateData(schemaElement: SchemaElement, hasPickFrom: boolean) {
   } else {
     return generateFormat(schemaElement as PrimaryTypes | MockTypes);
   }
+}
+
+function generateWrongType(type: string | undefined) {
+  if (!type)
+    throw new NullSchemaElementError(
+      "Cannot run generate wrong type function without the element type.",
+    );
+
+  const currentTypes: PrimaryTypes[] = ["string", "boolean", "date", "number"];
+  const currentIndex = currentTypes.findIndex((ctype) => ctype === type);
+  currentTypes.splice(currentIndex, 1);
+  return generateData(getRandomArrayElement(currentTypes), false);
 }

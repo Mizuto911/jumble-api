@@ -6,9 +6,10 @@ import { defaultSchema } from "../schemas.js";
 
 const router = express.Router();
 
+// TODO: Refactor the parsing logic.
+
 router.get("/", (req, res) => {
   const { missing, wrongType, malformed, probability, schemaID } = req.query;
-  console.log(missing, wrongType, malformed, probability);
 
   if (
     !validateOptionQuery({
@@ -45,7 +46,7 @@ router.get("/", (req, res) => {
 
   res.status(200).json({
     success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema),
+    data: generateOutputFromSchema(schema ?? defaultSchema, options),
   });
 });
 
