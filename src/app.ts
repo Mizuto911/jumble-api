@@ -14,7 +14,7 @@ const options = {
   port: {
     type: "string",
     short: "p",
-    default: "3000",
+    default: "3030",
   },
   schema: {
     type: "string",
@@ -23,7 +23,7 @@ const options = {
 } as const;
 
 const { values } = parseArgs({ options });
-const port = parseInt(values.port ?? "3000", 10);
+const port = parseInt(values.port ?? "3030", 10);
 const schemaDir = values.schema;
 
 if (schemaDir) {

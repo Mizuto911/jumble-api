@@ -114,24 +114,32 @@ function generateFormat(
   }
 }
 
-function generatePickFrom(pickFrom: PickFrom) {
+function generatePickFrom(pickFrom: PickFrom | undefined) {
   if (!pickFrom) throw new NullPickFromArrayError();
   return getRandomArrayElement(pickFrom);
+}
+
+function getSchemaElementFormat(
+  schemaElement: SchemaElementFormat,
+): PrimaryTypes | MockTypes {
+  if (!schemaElement.format) throw new FormatDeclarationError();
+  return schemaElement.format;
 }
 
 function generateData(schemaElement: SchemaElement, hasPickFrom: boolean) {
   if (!schemaElement) throw new NullSchemaElementError();
   if (typeof schemaElement === "object") {
-    return hasPickFrom
-      ? generatePickFrom(schemaElement.pickFrom as PickFrom)
-      : generateFormat(
-          schemaElement.format as PrimaryTypes | MockTypes,
-          schemaElement.min,
-          schemaElement.max,
-        );
-  } else {
-    return generateFormat(schemaElement as PrimaryTypes | MockTypes);
+    if (schemaElement.pickFrom !== null) {
+      return generatePickFrom(schemaElement.pickFrom);
+    }
+    return generateFormat(
+      getSchemaElementFormat(schemaElement),
+      schemaElement.min,
+      schemaElement.max,
+    );
   }
+
+  return generateFormat(schemaElement as PrimaryTypes | MockTypes);
 }
 
 function generateWrongType(type: string | undefined) {

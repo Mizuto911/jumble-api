@@ -4,6 +4,7 @@ import {
   getMalformedKey,
 } from "./utilities.js";
 import generateDataFromSchemaElement from "./datagen.js";
+import { MalformedSchemaError } from "./error.js";
 
 export default function generateOutputFromSchema(
   schema: Schema,
@@ -28,8 +29,24 @@ export default function generateOutputFromSchema(
   return output;
 }
 
+function isSchemaWrapper(
+  schema: Schema,
+): schema is { array?: ArrayLength; properties: SchemaProperties } {
+  return (
+    typeof schema === "object" &&
+    schema !== null &&
+    "properties" in schema &&
+    !("format" in schema) &&
+    !("pickFrom" in schema)
+  );
+}
+
+function getSchemaProperties(schema: Schema): SchemaProperties {
+  return isSchemaWrapper(schema) ? schema.properties : schema;
+}
+
 function isSchemaElement(
-  schemaElement: SchemaElement,
+  schemaElement: Schema | SchemaElement | undefined,
 ): schemaElement is SchemaElement {
   return (
     !!schemaElement &&
@@ -102,31 +119,32 @@ function generateOutput(
 ) {
   let outputRef = output;
   let changes: Record<string, string> = {};
-  const keys = Object.keys((schema.properties as SchemaProperties) ?? schema);
+  const schemaProperties = getSchemaProperties(schema);
+  const keys = Object.keys(schemaProperties);
 
   if (array && i !== undefined) {
     output[i] = {};
     outputRef = output[i];
   }
 
-  if (options)
-    changes = parseOptions(
-      Object.keys((schema.properties as SchemaProperties) ?? schema),
-      options,
-    );
+  if (options) changes = parseOptions(keys, options);
 
   for (let key of keys) {
-    const schemaElement = (schema.properties as SchemaProperties) ?? schema;
+    const schemaElement = schemaProperties[key];
     if (changes[key] === "missing") continue;
-    if (isSchemaElement(schemaElement[key] as SchemaElement)) {
+    if (isSchemaElement(schemaElement)) {
       outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
         generateDataFromSchemaElement(
-          schemaElement[key] as SchemaElement,
+          schemaElement,
           changes[key] === "wrongType",
         );
-    } else {
+    } else if (typeof schemaElement === "object") {
       outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
-        generateOutputFromSchema(schemaElement[key] as Schema);
+        generateOutputFromSchema(schemaElement);
+    } else {
+      throw new MalformedSchemaError(
+        `The schema element for key '${key}' is not valid.`,
+      );
     }
   }
 }
