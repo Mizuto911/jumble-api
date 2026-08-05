@@ -7,6 +7,7 @@ import {
   FormatDeclarationError,
   NullSchemaElementError,
   NullPickFromArrayError,
+  InvalidRangeError,
 } from "./error.js";
 import { faker } from "@faker-js/faker";
 
@@ -68,6 +69,10 @@ function generateFormat(
   min?: number | null,
   max?: number | null,
 ) {
+  if (min && max && min > max) {
+    throw new InvalidRangeError();
+  }
+
   switch (format) {
     case "string":
       return faker.lorem.words({ min: min ?? 0, max: max ?? 10 });
@@ -77,8 +82,8 @@ function generateFormat(
       return getRandomTrueOrFalse();
     case "date":
       return faker.date.between({
-        from: new Date().getTime() - 157788000000, // 5 years before now
-        to: new Date().getTime() + 157788000000, // 5 years after now
+        from: min ?? new Date().getTime() - 157788000000, // 5 years before now
+        to: max ?? new Date().getTime() + 157788000000, // 5 years after now
       });
     case "sex":
       return faker.person.sex();

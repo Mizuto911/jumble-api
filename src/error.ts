@@ -40,3 +40,12 @@ export class MalformedSchemaError extends Error {
     Object.setPrototypeOf(this, SchemaDirNotExistError.prototype);
   }
 }
+
+export class InvalidRangeError extends Error {
+  constructor(
+    message: string = "The 'min' value should be less than the 'max' value in the range.",
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, InvalidRangeError.prototype);
+  }
+}
