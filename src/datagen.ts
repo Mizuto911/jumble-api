@@ -17,7 +17,7 @@ export default function generateDataFromSchemaElement(
   wrongType?: boolean,
 ) {
   if (!schemaElement) throw new NullSchemaElementError();
-  if (wrongType)
+  if (wrongType) {
     return generateWrongType(
       typeof schemaElement === "object" && schemaElement.format
         ? schemaElement.format
@@ -25,6 +25,7 @@ export default function generateDataFromSchemaElement(
           ? schemaElement
           : undefined,
     );
+  }
 
   let data;
   let arrayLength: ArrayLength;
@@ -143,13 +144,9 @@ function generateData(schemaElement: SchemaElement, hasPickFrom: boolean) {
 }
 
 function generateWrongType(type: string | undefined) {
-  if (!type)
-    throw new NullSchemaElementError(
-      "Cannot run generate wrong type function without the element type.",
-    );
-
   const currentTypes: PrimaryTypes[] = ["string", "boolean", "date", "number"];
+  if (!type) return generateData(getRandomArrayElement(currentTypes), false);
   const currentIndex = currentTypes.findIndex((ctype) => ctype === type);
-  currentTypes.splice(currentIndex, 1);
+  if (currentIndex !== -1) currentTypes.splice(currentIndex, 1);
   return generateData(getRandomArrayElement(currentTypes), false);
 }

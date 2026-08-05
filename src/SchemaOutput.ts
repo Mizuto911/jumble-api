@@ -140,7 +140,7 @@ function generateOutput(
         );
     } else if (typeof schemaElement === "object") {
       outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
-        generateOutputFromSchema(schemaElement);
+        generateOutputFromSchema(schemaElement, options);
     } else {
       throw new MalformedSchemaError(
         `The schema element for key '${key}' is not valid.`,
