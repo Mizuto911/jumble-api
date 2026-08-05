@@ -2,7 +2,7 @@
   "name": "jumble-api",
   "version": "1.0.0",
   "description": "JumbleAPI is a configless api to help frontend developers test how their application behaves under certain situations. It has options to save a schema, set delays for responses, return a certain or random status code, missing keys, wrong types, and malformed data. A simple API for generating random data using Faker.js and validating it with AJV. ",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
     "dev": "tsx watch src/app.ts --schema schemas.js",
     "build": "tsc",
