@@ -5,8 +5,6 @@ import {
 } from "./utilities.js";
 import generateDataFromSchemaElement from "./datagen.js";
 
-// TODO: Refactor O(N^2) Time Complexity of the parseOptions function
-
 export default function generateOutputFromSchema(
   schema: Schema,
   options?: Options,
@@ -30,22 +28,36 @@ export default function generateOutputFromSchema(
   return output;
 }
 
-function isSchemaElement(schemaElement: SchemaElement) {
-  return !(schemaElement as SchemaProperties).properties;
+function isSchemaElement(
+  schemaElement: SchemaElement,
+): schemaElement is SchemaElement {
+  return (
+    !!schemaElement &&
+    (typeof schemaElement === "string" ||
+      (typeof schemaElement === "object" && !("properties" in schemaElement)))
+  );
 }
 
 function selectKeys(keys: string[], changesAmount: number) {
+  if (changesAmount > keys.length)
+    throw new RangeError(
+      "Value 'Changes Amount' cannot be less than the length of keys array.",
+    );
+
   let objectKeys = [...keys];
-  let changeKeys: string[] = [];
+  let length = keys.length;
 
   for (let i = 0; i < changesAmount; i++) {
-    const key = getRandomArrayElement(objectKeys);
-    const index = objectKeys.findIndex((e) => e === key);
-    objectKeys.splice(index, 1);
-    changeKeys.push(key);
+    const randomIndex = Math.floor(Math.random() * (length - i));
+    const randomKey = objectKeys[randomIndex];
+    const lastElement = objectKeys[length - i - 1];
+    if (!randomKey || !lastElement)
+      throw new TypeError("Keys array cannot contain undefined elements.");
+    objectKeys[length - i] = randomKey;
+    objectKeys[randomIndex] = lastElement;
   }
 
-  return changeKeys;
+  return objectKeys.slice(-changesAmount);
 }
 
 function parseOptions(keys: string[], options: Options) {
@@ -53,9 +65,9 @@ function parseOptions(keys: string[], options: Options) {
   if (options.probability < Math.random()) return changes;
 
   let oneEach = false;
-  let appliedOptions: string[] = [];
-
+  let appliedOptions: Set<string> = new Set();
   let enabledOptions: string[] = [];
+
   for (const [key, value] of Object.entries(options)) {
     if (key === "probability") continue;
     if (value) enabledOptions.push(key);
@@ -68,11 +80,11 @@ function parseOptions(keys: string[], options: Options) {
   changeKeys.forEach((key) => {
     const option = oneEach
       ? getRandomArrayElement(enabledOptions)
-      : enabledOptions[appliedOptions.length];
-    if (!appliedOptions.includes(option)) {
-      appliedOptions.push(option);
+      : enabledOptions[appliedOptions.size];
+    if (!appliedOptions.has(option)) {
+      appliedOptions.add(option);
     }
-    if (appliedOptions.length === enabledOptions.length) {
+    if (appliedOptions.size === enabledOptions.length) {
       oneEach = true;
     }
     changes[key] = option;
@@ -90,6 +102,7 @@ function generateOutput(
 ) {
   let outputRef = output;
   let changes: Record<string, string> = {};
+  const keys = Object.keys((schema.properties as SchemaProperties) ?? schema);
 
   if (array && i !== undefined) {
     output[i] = {};
@@ -102,20 +115,18 @@ function generateOutput(
       options,
     );
 
-  for (let [key, value] of Object.entries(
-    (schema.properties as SchemaProperties) ?? schema,
-  )) {
+  for (let key of keys) {
+    const schemaElement = (schema.properties as SchemaProperties) ?? schema;
     if (changes[key] === "missing") continue;
-    if (changes[key] === "malformed") key = getMalformedKey(key);
-    if (isSchemaElement(value as SchemaElement)) {
-      outputRef[key] = generateDataFromSchemaElement(
-        value as SchemaElement,
-        changes[key] === "wrongType" ? true : false,
-      );
+    if (isSchemaElement(schemaElement[key] as SchemaElement)) {
+      outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
+        generateDataFromSchemaElement(
+          schemaElement[key] as SchemaElement,
+          changes[key] === "wrongType",
+        );
     } else {
-      outputRef[key] = generateOutputFromSchema(
-        ((schema.properties as SchemaProperties) ?? schema)[key] as Schema,
-      );
+      outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
+        generateOutputFromSchema(schemaElement[key] as Schema);
     }
   }
 }
