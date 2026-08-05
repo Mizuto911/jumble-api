@@ -116,7 +116,7 @@ function generateFormat(
 }
 
 function generatePickFrom(pickFrom: PickFrom | undefined) {
-  if (!pickFrom) throw new NullPickFromArrayError();
+  if (!pickFrom) throw new NullPickFromArrayError(`${pickFrom}`);
   return getRandomArrayElement(pickFrom);
 }
 
@@ -130,7 +130,7 @@ function getSchemaElementFormat(
 function generateData(schemaElement: SchemaElement, hasPickFrom: boolean) {
   if (!schemaElement) throw new NullSchemaElementError();
   if (typeof schemaElement === "object") {
-    if (schemaElement.pickFrom !== null) {
+    if (hasPickFrom && schemaElement.pickFrom) {
       return generatePickFrom(schemaElement.pickFrom);
     }
     return generateFormat(
