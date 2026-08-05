@@ -17,7 +17,7 @@ router.get("/random", (req, res) => {
   if (schemaID && !schemaIDExist(schemaID as string)) {
     return res.status(404).json({
       success: false,
-      msg: `Schema with id "${schemaID}" does not exist.`,
+      msg: `Schema with id '${schemaID}' does not exist.`,
     });
   }
 
@@ -44,7 +44,7 @@ router.get("/:status", (req, res) => {
   if (schemaID && !schemaIDExist(schemaID as string)) {
     return res.status(404).json({
       success: false,
-      msg: `Schema with id "${schemaID}" does not exist.`,
+      msg: `Schema with id '${schemaID}' does not exist.`,
     });
   }
 

@@ -9,8 +9,25 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   const query: delayQuery = req.query;
-  const value = query.value ?? 5000;
+  const querySet = new Set(["ms", "us", "ns", "s"]);
+  const value = query.value ? parseInt(query.value, 10) : 5000;
+
+  if (isNaN(value) || value < 0) {
+    return res.status(400).json({
+      success: false,
+      msg: "Invalid delay value provided. It must be a non-negative number.",
+    });
+  }
+
   const units = query.value ? (query.units ?? "ms") : "ms";
+
+  if (!querySet.has(units)) {
+    return res.status(400).json({
+      success: false,
+      msg: "Invalid delay units provided. It must be one of 'ms', 'us', 'ns', or 's'.",
+    });
+  }
+
   const delay = convertDelayValueToMS(value, units);
 
   const schemaID = req.query.schemaID;
@@ -18,7 +35,7 @@ router.get("/", (req, res) => {
   if (schemaID && !schemaIDExist(schemaID as string)) {
     return res.status(404).json({
       success: false,
-      msg: `Schema with id "${schemaID}" does not exist.`,
+      msg: `Schema with id '${schemaID}' does not exist.`,
     });
   }
 
@@ -46,9 +63,27 @@ router.post("/", (req, res) => {
   }
 
   const query: delayQuery = req.query;
-  const value = query.value ?? 5000;
+  const querySet = new Set(["ms", "us", "ns", "s"]);
+  const value = query.value ? parseInt(query.value, 10) : 5000;
+
+  if (isNaN(value) || value < 0) {
+    return res.status(400).json({
+      success: false,
+      msg: "Invalid delay value provided. It must be a non-negative number.",
+    });
+  }
+
   const units = query.value ? (query.units ?? "ms") : "ms";
+
+  if (!querySet.has(units)) {
+    return res.status(400).json({
+      success: false,
+      msg: "Invalid delay units provided. It must be one of 'ms', 'us', 'ns', or 's'.",
+    });
+  }
+
   const delay = convertDelayValueToMS(value, units);
+
   setTimeout(() => {
     res.status(200).json({
       success: true,

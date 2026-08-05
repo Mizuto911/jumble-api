@@ -2,7 +2,7 @@ type Units = "ms" | "us" | "ns" | "s";
 type QueryBool = "0" | "1";
 
 type delayQuery = {
-  value?: number | undefined;
+  value?: string | undefined;
   units?: Units | undefined;
 };
 
