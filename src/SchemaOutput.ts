@@ -92,7 +92,11 @@ function parseOptions(keys: string[], options: Options) {
 
   const amount = Math.floor(keys.length / 3);
   const changesToMake =
-    enabledOptions.length < amount ? amount : enabledOptions.length;
+    enabledOptions.length < amount
+      ? amount
+      : enabledOptions.length > keys.length
+        ? keys.length
+        : enabledOptions.length;
   const changeKeys = selectKeys(keys, changesToMake);
 
   changeKeys.forEach((key) => {
