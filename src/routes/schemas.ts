@@ -22,17 +22,25 @@ router.get("/:schemaID", (req, res) => {
 
 router.post("/", (req, res) => {
   const schemaCreate: SchemaCreateRequest = req.body;
-  if (!validateSchema(schemaCreate.schema)) {
-    return res.status(422).json({
-      success: false,
-      msg: "Schema provided is not a valid schema format.",
-    });
-  }
 
   if (!schemaCreate.schemaID) {
     return res.status(400).json({
       success: false,
-      msg: "Provide a schema key for your schema.",
+      msg: "Provide a schema ID for your schema.",
+    });
+  }
+
+  if (!schemaCreate.schema) {
+    return res.status(400).json({
+      success: false,
+      msg: "Provide a schema for your schema key.",
+    });
+  }
+
+  if (!validateSchema(schemaCreate.schema)) {
+    return res.status(422).json({
+      success: false,
+      msg: "Schema provided is not a valid schema format.",
     });
   }
 
@@ -60,32 +68,26 @@ router.delete("/:schemaID", (req, res) => {
   res.status(204).send();
 });
 
-router.put("/", (req, res) => {
-  const schemaCreate: SchemaCreateRequest = req.body;
-  if (!validateSchema(schemaCreate.schema)) {
+router.put("/:schemaID", (req, res) => {
+  const schema = req.body;
+  const { schemaID } = req.params;
+
+  if (!schemaIDExist(schemaID)) {
+    return res.status(404).json({
+      success: false,
+      msg: `Schema with id '${schemaID}' does not exist.`,
+    });
+  }
+
+  if (!validateSchema(schema)) {
     return res.status(422).json({
       success: false,
       msg: "Schema provided is not a valid schema format.",
     });
   }
 
-  if (!schemaCreate.schemaID) {
-    return res.status(400).json({
-      success: false,
-      msg: "Provide a schema key for your schema.",
-    });
-  }
-
-  if (!schemaIDExist(schemaCreate.schemaID)) {
-    return res.status(404).json({
-      success: false,
-      msg: `Schema with id '${schemaCreate.schemaID}' does not exist.`,
-    });
-  }
-
-  schemasCollection[schemaCreate.schemaID] = schemaCreate.schema;
-
-  res.status(201).json({ success: true, data: schemaCreate.schema });
+  schemasCollection[schemaID] = schema;
+  res.status(201).json({ success: true, data: schema });
 });
 
 export default router;

@@ -44,10 +44,17 @@ router.get("/", (req, res) => {
       ? schemasCollection[schemaID as string]
       : undefined;
 
-  res.status(200).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema, options),
-  });
+  try {
+    return res.status(200).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema, options),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 router.post("/", (req, res) => {
@@ -83,10 +90,17 @@ router.post("/", (req, res) => {
     probability: probability ? Number(probability) : 1,
   };
 
-  res.status(200).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema, options),
-  });
+  try {
+    return res.status(200).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema, options),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 router.get("/random", (req, res) => {
@@ -111,10 +125,17 @@ router.get("/random", (req, res) => {
       ? schemasCollection[schemaID as string]
       : undefined;
 
-  res.status(200).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema, options),
-  });
+  try {
+    return res.status(200).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema, options),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 router.post("/random", (req, res) => {
@@ -134,10 +155,17 @@ router.post("/random", (req, res) => {
     probability: Math.random(),
   };
 
-  res.status(200).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema, options),
-  });
+  try {
+    return res.status(200).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema, options),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 export default router;

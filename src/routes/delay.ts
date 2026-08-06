@@ -45,11 +45,50 @@ router.get("/", (req, res) => {
       : undefined;
 
   setTimeout(() => {
-    res.status(200).json({
-      success: true,
-      data: generateOutputFromSchema(schema ?? defaultSchema),
-    });
+    try {
+      return res.status(200).json({
+        success: true,
+        data: generateOutputFromSchema(schema ?? defaultSchema),
+      });
+    } catch (e) {
+      return res.status(400).json({
+        success: false,
+        msg: (e as Error).message,
+      });
+    }
   }, delay);
+});
+
+router.get("/random", (req, res) => {
+  const schemaID = req.query.schemaID;
+
+  if (schemaID && !schemaIDExist(schemaID as string)) {
+    return res.status(404).json({
+      success: false,
+      msg: `Schema with id '${schemaID}' does not exist.`,
+    });
+  }
+
+  const randomDelay = Math.random() * 30000;
+
+  const schema =
+    schemaID && schemasCollection
+      ? schemasCollection[schemaID as string]
+      : undefined;
+
+  setTimeout(() => {
+    try {
+      return res.status(200).json({
+        success: true,
+        data: generateOutputFromSchema(schema ?? defaultSchema),
+      });
+    } catch (e) {
+      return res.status(400).json({
+        success: false,
+        msg: (e as Error).message,
+      });
+    }
+  }, randomDelay);
 });
 
 router.post("/", (req, res) => {
@@ -85,11 +124,45 @@ router.post("/", (req, res) => {
   const delay = convertDelayValueToMS(value, units);
 
   setTimeout(() => {
-    res.status(200).json({
-      success: true,
-      data: generateOutputFromSchema(schema ?? defaultSchema),
-    });
+    try {
+      return res.status(200).json({
+        success: true,
+        data: generateOutputFromSchema(schema ?? defaultSchema),
+      });
+    } catch (e) {
+      return res.status(400).json({
+        success: false,
+        msg: (e as Error).message,
+      });
+    }
   }, delay);
+});
+
+router.post("/random", (req, res) => {
+  const schema = req.body;
+
+  if (!validateSchema(schema)) {
+    return res.status(400).json({
+      success: false,
+      msg: "Schema provided is not a valid schema format.",
+    });
+  }
+
+  const randomDelay = Math.random() * 30000;
+
+  setTimeout(() => {
+    try {
+      return res.status(200).json({
+        success: true,
+        data: generateOutputFromSchema(schema ?? defaultSchema),
+      });
+    } catch (e) {
+      return res.status(400).json({
+        success: false,
+        msg: (e as Error).message,
+      });
+    }
+  }, randomDelay);
 });
 
 export default router;

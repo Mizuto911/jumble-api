@@ -26,10 +26,17 @@ router.get("/random", (req, res) => {
       ? schemasCollection[schemaID as string]
       : undefined;
 
-  return res.status(getRandomStatusCode()).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema),
-  });
+  try {
+    return res.status(getRandomStatusCode()).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 router.get("/:status", (req, res) => {
@@ -53,10 +60,17 @@ router.get("/:status", (req, res) => {
       ? schemasCollection[schemaID as string]
       : undefined;
 
-  return res.status(Number(status)).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema),
-  });
+  try {
+    return res.status(Number(status)).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 router.post("/random", (req, res) => {
@@ -69,10 +83,17 @@ router.post("/random", (req, res) => {
     });
   }
 
-  return res.status(getRandomStatusCode()).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema),
-  });
+  try {
+    return res.status(getRandomStatusCode()).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 router.post("/:status", (req, res) => {
@@ -92,10 +113,17 @@ router.post("/:status", (req, res) => {
       .json({ success: false, msg: `Status code ${status} is invalid.` });
   }
 
-  return res.status(Number(status)).json({
-    success: true,
-    data: generateOutputFromSchema(schema ?? defaultSchema),
-  });
+  try {
+    return res.status(Number(status)).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? defaultSchema),
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      msg: (e as Error).message,
+    });
+  }
 });
 
 export default router;
