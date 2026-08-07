@@ -107,13 +107,3 @@ const SchemaModel: AnySchema = {
 };
 
 export default SchemaModel;
-
-export const defaultSchema: Schema = {
-  id: "uuid",
-  firstname: "firstname",
-  lastname: "lastname",
-  sex: "sex",
-  email: "email",
-  phone: "phone",
-  profilePic: "avatarUrl",
-};
