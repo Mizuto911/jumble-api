@@ -57,4 +57,8 @@ export default class SchemasCollection {
 
     this.collection[id] = schema;
   }
+
+  has(id: string) {
+    return id in this.collection;
+  }
 }

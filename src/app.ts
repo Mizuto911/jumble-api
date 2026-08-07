@@ -7,8 +7,9 @@ import startApp from "./starter.js";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { existsSync } from "node:fs";
+import SchemasCollection from "./SchemasCollection.js";
 
-export let schemasCollection: SchemaCollection = {};
+let schemas: SchemaCollection | undefined = undefined;
 
 const options = {
   port: {
@@ -32,8 +33,7 @@ if (schemaDir) {
 
   if (!existsSync(schemasPath)) throw new SchemaDirNotExistError();
 
-  const { default: schemas } = await import(filePath);
-
+  schemas = (await import(filePath)).default;
   if (!schemas) throw new SchemaDirNotExistError();
 
   for (const [key, value] of Object.entries(schemas)) {
@@ -43,8 +43,8 @@ if (schemaDir) {
       );
     }
   }
-
-  schemasCollection = { ...schemas };
 }
+
+export const schemasCollection = new SchemasCollection(schemas);
 
 startApp(port);
