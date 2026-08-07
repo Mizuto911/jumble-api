@@ -1,23 +1,25 @@
 import express from "express";
 import validateSchema from "../validator.js";
-import { schemaIDExist } from "../utilities.js";
 import { schemasCollection } from "../app.js";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.status(200).json({ success: true, data: schemasCollection });
+  res.status(200).json({ success: true, data: schemasCollection.getAll() });
 });
 
 router.get("/:schemaID", (req, res) => {
   const schemaID = req.params.schemaID;
-  if (!schemaIDExist(schemaID) || schemasCollection === undefined) {
+  const schema = schemasCollection.get(schemaID);
+
+  if (!schema) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
     });
   }
-  res.status(200).json({ success: true, data: schemasCollection[schemaID] });
+
+  res.status(200).json({ success: true, data: schema });
 });
 
 router.post("/", (req, res) => {
@@ -44,35 +46,34 @@ router.post("/", (req, res) => {
     });
   }
 
-  if (schemaIDExist(schemaCreate.schemaID)) {
+  if (schemasCollection.has(schemaCreate.schemaID)) {
     return res.status(409).json({
       success: false,
       msg: `Schema with id '${schemaCreate.schemaID}' already exists.`,
     });
   }
 
-  schemasCollection[schemaCreate.schemaID] = schemaCreate.schema;
-
+  schemasCollection.add(schemaCreate.schemaID, schemaCreate.schema);
   res.status(201).json({ success: true, data: schemaCreate.schema });
 });
 
 router.delete("/:schemaID", (req, res) => {
   const schemaID = req.params.schemaID;
-  if (!schemaIDExist(schemaID) || schemasCollection === undefined) {
+  if (!schemasCollection.has(schemaID)) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
     });
   }
-  delete schemasCollection[schemaID];
+  schemasCollection.delete(schemaID);
   res.status(204).send();
 });
 
 router.put("/:schemaID", (req, res) => {
   const schema = req.body;
-  const { schemaID } = req.params;
+  const schemaID = req.params.schemaID;
 
-  if (!schemaIDExist(schemaID)) {
+  if (!schemasCollection.has(schemaID)) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
@@ -86,7 +87,7 @@ router.put("/:schemaID", (req, res) => {
     });
   }
 
-  schemasCollection[schemaID] = schema;
+  schemasCollection.update(schemaID, schema);
   res.status(201).json({ success: true, data: schema });
 });
 

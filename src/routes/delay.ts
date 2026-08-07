@@ -1,7 +1,6 @@
 import express from "express";
-import { convertDelayValueToMS, schemaIDExist } from "../utilities.js";
+import { convertDelayValueToMS } from "../utilities.js";
 import validateSchema from "../validator.js";
-import { defaultSchema } from "../schemas.js";
 import { schemasCollection } from "../app.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
 
@@ -31,24 +30,22 @@ router.get("/", (req, res) => {
   const delay = convertDelayValueToMS(value, units);
 
   const schemaID = req.query.schemaID;
+  const schema = schemaID
+    ? schemasCollection.get(schemaID as string)
+    : undefined;
 
-  if (schemaID && !schemaIDExist(schemaID as string)) {
+  if (!schema) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
     });
   }
 
-  const schema =
-    schemaID && schemasCollection
-      ? schemasCollection[schemaID as string]
-      : undefined;
-
   setTimeout(() => {
     try {
       return res.status(200).json({
         success: true,
-        data: generateOutputFromSchema(schema ?? defaultSchema),
+        data: generateOutputFromSchema(schema ?? schemasCollection.default),
       });
     } catch (e) {
       return res.status(400).json({
@@ -61,8 +58,11 @@ router.get("/", (req, res) => {
 
 router.get("/random", (req, res) => {
   const schemaID = req.query.schemaID;
+  const schema = schemaID
+    ? schemasCollection.get(schemaID as string)
+    : undefined;
 
-  if (schemaID && !schemaIDExist(schemaID as string)) {
+  if (!schema) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
@@ -71,16 +71,11 @@ router.get("/random", (req, res) => {
 
   const randomDelay = Math.random() * 30000;
 
-  const schema =
-    schemaID && schemasCollection
-      ? schemasCollection[schemaID as string]
-      : undefined;
-
   setTimeout(() => {
     try {
       return res.status(200).json({
         success: true,
-        data: generateOutputFromSchema(schema ?? defaultSchema),
+        data: generateOutputFromSchema(schema ?? schemasCollection.default),
       });
     } catch (e) {
       return res.status(400).json({
@@ -127,7 +122,7 @@ router.post("/", (req, res) => {
     try {
       return res.status(200).json({
         success: true,
-        data: generateOutputFromSchema(schema ?? defaultSchema),
+        data: generateOutputFromSchema(schema ?? schemasCollection.default),
       });
     } catch (e) {
       return res.status(400).json({
@@ -154,7 +149,7 @@ router.post("/random", (req, res) => {
     try {
       return res.status(200).json({
         success: true,
-        data: generateOutputFromSchema(schema ?? defaultSchema),
+        data: generateOutputFromSchema(schema ?? schemasCollection.default),
       });
     } catch (e) {
       return res.status(400).json({
