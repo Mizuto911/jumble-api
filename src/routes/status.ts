@@ -2,7 +2,7 @@ import express from "express";
 import { isValidStatusCode, getRandomStatusCode } from "../utilities.js";
 import validateSchema from "../validator.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
-import { schemasCollection } from "../app.js";
+import { schemasCollection } from "../server.js";
 
 const router = express.Router();
 

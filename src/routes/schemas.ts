@@ -1,6 +1,6 @@
 import express from "express";
 import validateSchema from "../validator.js";
-import { schemasCollection } from "../app.js";
+import { schemasCollection } from "../server.js";
 
 const router = express.Router();
 

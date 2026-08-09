@@ -1,50 +1,8 @@
 #!/usr/bin/env node
 
-import { parseArgs } from "node:util";
-import { SchemaDirNotExistError, MalformedSchemaError } from "./error.js";
-import validateSchema from "./validator.js";
-import startApp from "./starter.js";
-import path from "node:path";
-import { pathToFileURL } from "node:url";
-import { existsSync } from "node:fs";
-import SchemasCollection from "./SchemasCollection.js";
+import app from "./server.js";
+import { port } from "./server.js";
 
-let schemas: SchemaCollection | undefined = undefined;
-
-const options = {
-  port: {
-    type: "string",
-    short: "p",
-    default: "3030",
-  },
-  schema: {
-    type: "string",
-    short: "s",
-  },
-} as const;
-
-const { values } = parseArgs({ options });
-const port = parseInt(values.port ?? "3030", 10);
-const schemaDir = values.schema;
-
-if (schemaDir) {
-  const schemasPath = path.join(process.cwd(), schemaDir);
-  const filePath = pathToFileURL(schemasPath).href;
-
-  if (!existsSync(schemasPath)) throw new SchemaDirNotExistError();
-
-  schemas = (await import(filePath)).default;
-  if (!schemas) throw new SchemaDirNotExistError();
-
-  for (const [key, value] of Object.entries(schemas)) {
-    if (!validateSchema(value)) {
-      throw new MalformedSchemaError(
-        `Schema with id "${key}" has malformed format.`,
-      );
-    }
-  }
-}
-
-export const schemasCollection = new SchemasCollection(schemas);
-
-startApp(port);
+app.listen(port, () => {
+  console.log(`Jumble API is listening to port ${port}...`);
+});

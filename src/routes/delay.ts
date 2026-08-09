@@ -1,7 +1,7 @@
 import express from "express";
 import { convertDelayValueToMS } from "../utilities.js";
 import validateSchema from "../validator.js";
-import { schemasCollection } from "../app.js";
+import { schemasCollection } from "../server.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
 
 const router = express.Router();

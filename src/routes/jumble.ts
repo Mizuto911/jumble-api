@@ -1,7 +1,7 @@
 import express from "express";
 import { validateOptionQuery } from "../utilities.js";
 import validateSchema from "../validator.js";
-import { schemasCollection } from "../app.js";
+import { schemasCollection } from "../server.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
 import { getRandomTrueOrFalse } from "../utilities.js";
 
