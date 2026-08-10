@@ -29,19 +29,20 @@ export default function generateDataFromSchemaElement(
   }
 
   let data;
-  let arrayLength: ArrayLength;
+  let arrayLength: number;
   const hasPickFrom = checkValidProperties(schemaElement);
 
   if (typeof schemaElement === "object") {
     if (schemaElement.array) {
       data = [];
-      arrayLength =
-        typeof schemaElement.array === "number"
-          ? schemaElement.array
-          : generateRandomAmount(
-              schemaElement.array.min,
-              schemaElement.array.max,
-            );
+      if (typeof schemaElement.array === "number")
+        arrayLength = schemaElement.array;
+      else if (schemaElement.array.min < schemaElement.array.max)
+        arrayLength = generateRandomAmount(
+          schemaElement.array.min,
+          schemaElement.array.max,
+        );
+      else throw new InvalidRangeError();
 
       for (let i = 0; i < arrayLength; i++) {
         data[i] = generateData(schemaElement, hasPickFrom);

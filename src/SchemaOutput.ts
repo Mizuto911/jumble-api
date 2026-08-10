@@ -4,7 +4,7 @@ import {
   getMalformedKey,
 } from "./utilities.js";
 import generateDataFromSchemaElement from "./datagen.js";
-import { MalformedSchemaError } from "./error.js";
+import { MalformedSchemaError, InvalidRangeError } from "./error.js";
 
 export default function generateOutputFromSchema(
   schema: Schema,
@@ -17,7 +17,9 @@ export default function generateOutputFromSchema(
     output = [];
     let itemAmount;
     if (typeof arrayLength === "number") itemAmount = arrayLength;
-    else itemAmount = generateRandomAmount(arrayLength.min, arrayLength.max);
+    else if (arrayLength.min < arrayLength.max)
+      itemAmount = generateRandomAmount(arrayLength.min, arrayLength.max);
+    else throw new InvalidRangeError();
 
     for (let i = 0; i < itemAmount; i++) {
       generateOutput(schema, output, true, options, i);
