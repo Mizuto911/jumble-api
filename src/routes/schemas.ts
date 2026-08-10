@@ -88,7 +88,7 @@ router.put("/:schemaID", (req, res) => {
   }
 
   schemasCollection.update(schemaID, schema);
-  res.status(201).json({ success: true, data: schema });
+  res.status(200).json({ success: true, data: schema });
 });
 
 export default router;
