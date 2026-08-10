@@ -4,33 +4,35 @@ import delay from "./routes/delay.js";
 import status from "./routes/status.js";
 import schema from "./routes/schemas.js";
 import jumble from "./routes/jumble.js";
-import parseSettings from "./settingsLoader.js";
 import SchemasCollection from "./SchemasCollection.js";
 
-export const { port, schemas } = await parseSettings();
-export const schemasCollection = new SchemasCollection(schemas);
+export let schemasCollection: SchemasCollection;
 
-const app = express();
+export default function createApp(port: number, schemas?: SchemaCollection) {
+  schemasCollection = new SchemasCollection(schemas);
 
-app.use(
-  cors({
-    origin: `http://localhost:${port}`,
-    optionsSuccessStatus: 200,
-  }),
-);
-app.use(express.json());
+  const app = express();
 
-app.use("/api/delay", delay);
-app.use("/api/status", status);
-app.use("/api/schema", schema);
-app.use("/api/jumble", jumble);
+  app.use(
+    cors({
+      origin: `http://localhost:${port}`,
+      optionsSuccessStatus: 200,
+    }),
+  );
+  app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json("Health Check Complete");
-});
+  app.use("/api/delay", delay);
+  app.use("/api/status", status);
+  app.use("/api/schema", schema);
+  app.use("/api/jumble", jumble);
 
-app.use((req, res, next) => {
-  res.send("<h1>Status 404: Endpoint Not Found</h1>");
-});
+  app.get("/", (req, res) => {
+    res.json("Health Check Complete");
+  });
 
-export default app;
+  app.use((req, res) => {
+    res.send("<h1>Status 404: Endpoint Not Found</h1>");
+  });
+
+  return app;
+}
