@@ -2,6 +2,7 @@ import createApp from "../server.js";
 import testSchemas from "./testSchemas.js";
 import request from "supertest";
 import invalidSchema from "./invalidSchema.js";
+import { describe, it, expect } from "vitest";
 
 const app = createApp(3030, testSchemas);
 

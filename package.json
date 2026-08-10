@@ -14,7 +14,8 @@
     "dev": "tsx watch src/app.ts --schema schemas.js",
     "build": "tsc",
     "start": "node dist/app.js",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "bin": {
     "jumble-api": "./dist/app.js"
@@ -41,14 +42,12 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/jest": "^30.0.0",
     "@types/node": "^26.1.0",
     "@types/supertest": "^7.2.1",
     "cross-env": "^10.1.0",
-    "jest": "^30.4.2",
     "supertest": "^7.2.2",
-    "ts-jest": "^29.4.12",
     "tsx": "^4.23.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }
