@@ -129,12 +129,12 @@ describe("POST /api/status/:status", () => {
       expect(response.body).toHaveProperty("data");
     });
 
-    it("should respond with 400 status code and return invalid schema error", async () => {
+    it("should respond with 422 status code and return invalid schema error", async () => {
       const response = await request(app)
         .post("/api/status/200")
         .send(invalidSchema)
         .set("Accept", "application/json");
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(422);
       expect(response.body.success).toBe(false);
       expect(response.body).toHaveProperty("msg");
     });
@@ -161,16 +161,16 @@ describe("POST /api/status/:status", () => {
   });
 
   describe("given a certain status code as params and no schema passed in body", () => {
-    it("should respond with 400 status code and return invalid schema error", async () => {
+    it("should respond with 422 status code and return invalid schema error", async () => {
       const response = await request(app).post("/api/status/200");
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(422);
       expect(response.body.success).toBe(false);
       expect(response.body).toHaveProperty("msg");
     });
 
-    it("should respond with 400 status code and return invalid status code error", async () => {
+    it("should respond with 422 status code and return invalid schema error", async () => {
       const response = await request(app).post("/api/status/600");
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(422);
       expect(response.body.success).toBe(false);
       expect(response.body).toHaveProperty("msg");
     });
@@ -244,12 +244,12 @@ describe("POST /api/status/random", () => {
       }
     });
 
-    it("should respond 400 status code and return invalid schema error", async () => {
+    it("should respond 422 status code and return invalid schema error", async () => {
       const response = await request(app)
         .post("/api/status/random")
         .send(invalidSchema)
         .set("Accept", "application/json");
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(422);
       expect(response.body.success).toBe(false);
       expect(response.body).toHaveProperty("msg");
     });
