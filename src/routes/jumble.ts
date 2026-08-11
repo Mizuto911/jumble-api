@@ -62,7 +62,7 @@ router.post("/", (req, res) => {
   const schema = req.body;
 
   if (!validateSchema(schema)) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       msg: "Schema provided is not a valid schema format.",
     });
@@ -147,7 +147,7 @@ router.post("/random", (req, res) => {
   const schema = req.body;
 
   if (!validateSchema(schema)) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       msg: "Schema provided is not a valid schema format.",
     });
