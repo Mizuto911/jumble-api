@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import testSchemas from "./testSchemas.js";
-import invalidSchema from "./invalidSchema.js";
+import testSchemas from "./testing_schemas/testSchemas.js";
+import invalidSchema from "./testing_schemas/invalidSchema.js";
 import createApp from "../server.js";
 import request from "supertest";
 

@@ -1,7 +1,7 @@
 import createApp from "../server.js";
-import testSchemas from "./testSchemas.js";
 import request from "supertest";
-import invalidSchema from "./invalidSchema.js";
+import testSchemas from "./testing_schemas/testSchemas.js";
+import invalidSchema from "./testing_schemas/invalidSchema.js";
 import { describe, it, expect } from "vitest";
 import { STATUS_CODES } from "node:http";
 
