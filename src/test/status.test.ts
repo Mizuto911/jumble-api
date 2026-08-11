@@ -264,4 +264,13 @@ describe("POST /api/status/random", () => {
       expect(response.body).toHaveProperty("msg");
     });
   });
+
+  describe("given that no schema is passed in body", () => {
+    it("should respond 422 status code and return invalid schema error", async () => {
+      const response = await request(app).post("/api/status/random");
+      expect(response.statusCode).toBe(422);
+      expect(response.body.success).toBe(false);
+      expect(response.body).toHaveProperty("msg");
+    });
+  });
 });
