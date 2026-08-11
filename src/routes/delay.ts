@@ -34,7 +34,7 @@ router.get("/", (req, res) => {
     ? schemasCollection.get(schemaID as string)
     : undefined;
 
-  if (!schema) {
+  if (!schema && schemaID) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
@@ -62,7 +62,7 @@ router.get("/random", (req, res) => {
     ? schemasCollection.get(schemaID as string)
     : undefined;
 
-  if (!schema) {
+  if (!schema && schemaID) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
@@ -90,7 +90,7 @@ router.post("/", (req, res) => {
   const schema = req.body;
 
   if (!validateSchema(schema)) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       msg: "Schema provided is not a valid schema format.",
     });
@@ -137,7 +137,7 @@ router.post("/random", (req, res) => {
   const schema = req.body;
 
   if (!validateSchema(schema)) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       msg: "Schema provided is not a valid schema format.",
     });
