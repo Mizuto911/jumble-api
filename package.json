@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/app.ts --schema schemas.js",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "start": "node dist/app.js",
     "test": "vitest run",
     "test:watch": "vitest"
