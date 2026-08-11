@@ -47,14 +47,32 @@ function getSchemaProperties(schema: Schema): SchemaProperties {
   return isSchemaWrapper(schema) ? schema.properties : schema;
 }
 
-function isSchemaElement(
+function validateSchemaElement(
   schemaElement: Schema | SchemaElement | undefined,
 ): schemaElement is SchemaElement {
-  return (
-    !!schemaElement &&
-    (typeof schemaElement === "string" ||
-      (typeof schemaElement === "object" && !("properties" in schemaElement)))
-  );
+  let isSchemaElement = false;
+
+  if (
+    (schemaElement &&
+      typeof schemaElement === "object" &&
+      !("properties" in schemaElement)) ||
+    typeof schemaElement === "string"
+  ) {
+    isSchemaElement = true;
+    if (
+      typeof schemaElement === "object" &&
+      "format" in schemaElement &&
+      schemaElement.min !== undefined &&
+      schemaElement.min !== null &&
+      schemaElement.max !== undefined &&
+      schemaElement.max !== null &&
+      schemaElement.min > schemaElement.max
+    ) {
+      throw new InvalidRangeError();
+    }
+  }
+
+  return isSchemaElement;
 }
 
 function selectKeys(keys: string[], changesAmount: number) {
@@ -138,8 +156,10 @@ function generateOutput(
 
   for (let key of keys) {
     const schemaElement = schemaProperties[key];
+    const isSchemaElement = validateSchemaElement(schemaElement);
+
     if (changes[key] === "missing") continue;
-    if (isSchemaElement(schemaElement)) {
+    if (isSchemaElement) {
       outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
         generateDataFromSchemaElement(
           schemaElement,

@@ -28,7 +28,7 @@ router.get("/", (req, res) => {
     ? schemasCollection.get(schemaID as string)
     : undefined;
 
-  if (!schema) {
+  if (!schema && schemaID) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,
@@ -113,7 +113,7 @@ router.get("/random", (req, res) => {
     ? schemasCollection.get(schemaID as string)
     : undefined;
 
-  if (!schema) {
+  if (!schema && schemaID) {
     return res.status(404).json({
       success: false,
       msg: `Schema with id '${schemaID}' does not exist.`,

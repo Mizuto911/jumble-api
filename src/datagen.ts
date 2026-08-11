@@ -70,10 +70,6 @@ function generateFormat(
   min?: number | null,
   max?: number | null,
 ) {
-  if (min && max && min > max) {
-    throw new InvalidRangeError();
-  }
-
   switch (format) {
     case "string":
       return faker.lorem.words({ min: min ?? 0, max: max ?? 10 });
