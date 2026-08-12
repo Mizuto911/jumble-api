@@ -1,45 +1,17 @@
 import express from "express";
-import { convertDelayValueToMS } from "../utilities.js";
-import validateSchema from "../validator.js";
 import { schemasCollection } from "../server.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
+import {
+  checkDelayQuery,
+  checkSchemaBody,
+  checkSchemaInQuery,
+} from "../middleware/validator.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  const query: delayQuery = req.query;
-  const querySet = new Set(["ms", "us", "ns", "s"]);
-  const value = query.value ? parseInt(query.value, 10) : 5000;
-
-  if (isNaN(value) || value < 0) {
-    return res.status(400).json({
-      success: false,
-      msg: "Invalid delay value provided. It must be a non-negative number.",
-    });
-  }
-
-  const units = query.value ? (query.units ?? "ms") : "ms";
-
-  if (!querySet.has(units)) {
-    return res.status(400).json({
-      success: false,
-      msg: "Invalid delay units provided. It must be one of 'ms', 'us', 'ns', or 's'.",
-    });
-  }
-
-  const delay = convertDelayValueToMS(value, units);
-
-  const schemaID = req.query.schemaID;
-  const schema = schemaID
-    ? schemasCollection.get(schemaID as string)
-    : undefined;
-
-  if (!schema && schemaID) {
-    return res.status(404).json({
-      success: false,
-      msg: `Schema with id '${schemaID}' does not exist.`,
-    });
-  }
+router.get("/", checkSchemaInQuery, checkDelayQuery, (req, res) => {
+  const delay = req.delay;
+  const schema = req.schema;
 
   setTimeout(() => {
     try {
@@ -56,19 +28,8 @@ router.get("/", (req, res) => {
   }, delay);
 });
 
-router.get("/random", (req, res) => {
-  const schemaID = req.query.schemaID;
-  const schema = schemaID
-    ? schemasCollection.get(schemaID as string)
-    : undefined;
-
-  if (!schema && schemaID) {
-    return res.status(404).json({
-      success: false,
-      msg: `Schema with id '${schemaID}' does not exist.`,
-    });
-  }
-
+router.get("/random", checkSchemaInQuery, (req, res) => {
+  const schema = req.schema;
   const randomDelay = Math.random() * 30000;
 
   setTimeout(() => {
@@ -86,37 +47,9 @@ router.get("/random", (req, res) => {
   }, randomDelay);
 });
 
-router.post("/", (req, res) => {
-  const schema = req.body;
-
-  if (!validateSchema(schema)) {
-    return res.status(422).json({
-      success: false,
-      msg: "Schema provided is not a valid schema format.",
-    });
-  }
-
-  const query: delayQuery = req.query;
-  const querySet = new Set(["ms", "us", "ns", "s"]);
-  const value = query.value ? parseInt(query.value, 10) : 5000;
-
-  if (isNaN(value) || value < 0) {
-    return res.status(400).json({
-      success: false,
-      msg: "Invalid delay value provided. It must be a non-negative number.",
-    });
-  }
-
-  const units = query.value ? (query.units ?? "ms") : "ms";
-
-  if (!querySet.has(units)) {
-    return res.status(400).json({
-      success: false,
-      msg: "Invalid delay units provided. It must be one of 'ms', 'us', 'ns', or 's'.",
-    });
-  }
-
-  const delay = convertDelayValueToMS(value, units);
+router.post("/", checkSchemaBody, checkDelayQuery, (req, res) => {
+  const schema = req.schema;
+  const delay = req.delay;
 
   setTimeout(() => {
     try {
@@ -133,16 +66,8 @@ router.post("/", (req, res) => {
   }, delay);
 });
 
-router.post("/random", (req, res) => {
-  const schema = req.body;
-
-  if (!validateSchema(schema)) {
-    return res.status(422).json({
-      success: false,
-      msg: "Schema provided is not a valid schema format.",
-    });
-  }
-
+router.post("/random", checkSchemaBody, (req, res) => {
+  const schema = req.schema;
   const randomDelay = Math.random() * 30000;
 
   setTimeout(() => {

@@ -1,23 +1,17 @@
 import express from "express";
-import { isValidStatusCode, getRandomStatusCode } from "../utilities.js";
-import validateSchema from "../validator.js";
+import { getRandomStatusCode } from "../utilities.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
 import { schemasCollection } from "../server.js";
+import {
+  checkStatusCode,
+  checkSchemaInQuery,
+  checkSchemaBody,
+} from "../middleware/validator.js";
 
 const router = express.Router();
 
-router.get("/random", (req, res) => {
-  const schemaID = req.query.schemaID;
-  const schema = schemaID
-    ? schemasCollection.get(schemaID as string)
-    : undefined;
-
-  if (!schema && schemaID) {
-    return res.status(404).json({
-      success: false,
-      msg: `Schema with id '${schemaID}' does not exist.`,
-    });
-  }
+router.get("/random", checkSchemaInQuery, (req, res) => {
+  const schema = req.schema;
 
   try {
     return res.status(getRandomStatusCode()).json({
@@ -32,26 +26,9 @@ router.get("/random", (req, res) => {
   }
 });
 
-router.get("/:status", (req, res) => {
-  const status = req.params.status;
-  const schemaID = req.query.schemaID;
-
-  if (!isValidStatusCode(status)) {
-    return res
-      .status(400)
-      .json({ success: false, msg: `Status code ${status} is invalid.` });
-  }
-
-  const schema = schemaID
-    ? schemasCollection.get(schemaID as string)
-    : undefined;
-
-  if (!schema && schemaID) {
-    return res.status(404).json({
-      success: false,
-      msg: `Schema with id '${schemaID}' does not exist.`,
-    });
-  }
+router.get("/:status", checkStatusCode, checkSchemaInQuery, (req, res) => {
+  const status = req.status;
+  const schema = req.schema;
 
   try {
     return res.status(Number(status)).json({
@@ -66,15 +43,8 @@ router.get("/:status", (req, res) => {
   }
 });
 
-router.post("/random", (req, res) => {
-  const schema = req.body;
-
-  if (!validateSchema(schema)) {
-    return res.status(422).json({
-      success: false,
-      msg: "Schema provided is not a valid schema format.",
-    });
-  }
+router.post("/random", checkSchemaBody, (req, res) => {
+  const schema = req.schema;
 
   try {
     return res.status(getRandomStatusCode()).json({
@@ -89,22 +59,9 @@ router.post("/random", (req, res) => {
   }
 });
 
-router.post("/:status", (req, res) => {
-  const schema = req.body;
-
-  if (!validateSchema(schema)) {
-    return res.status(422).json({
-      success: false,
-      msg: "Schema provided is not a valid schema format.",
-    });
-  }
-
-  const status = req.params.status;
-  if (!isValidStatusCode(status)) {
-    return res
-      .status(400)
-      .json({ success: false, msg: `Status code ${status} is invalid.` });
-  }
+router.post("/:status", checkStatusCode, checkSchemaBody, (req, res) => {
+  const schema = req.schema;
+  const status = req.status;
 
   try {
     return res.status(Number(status)).json({
