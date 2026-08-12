@@ -1,4 +1,5 @@
 import { STATUS_CODES } from "node:http";
+import { InvalidOptionsError } from "./error.js";
 
 export function convertDelayValueToMS(value: number, units: Units) {
   const conversionRates: Record<Units, number> = {
@@ -20,22 +21,36 @@ export function getRandomStatusCode() {
   return Number(getRandomArrayElement(statusKeys));
 }
 
-export function validateOptionQuery(option: OptionQuery) {
-  const probability = Number(option.probability);
-  if (
-    option.probability &&
-    (Number.isNaN(probability) || probability > 1 || probability < 0)
-  )
-    return false;
+export function parseOptionQuery(option: OptionQuery) {
+  let probability;
+  if (option.probability !== undefined) {
+    probability = Number(option.probability);
+    if (isNaN(probability) || probability > 1 || probability < 0)
+      throw new InvalidOptionsError();
+  } else {
+    probability = 1;
+  }
 
-  const isValid = (option: string | undefined) =>
-    option === undefined || option === "0" || option === "1";
+  const parseOption = (option: string | undefined) => {
+    if (option === "1") return true;
+    else if (option === "0" || option === undefined) return false;
+    else throw new InvalidOptionsError();
+  };
 
-  if (!isValid(option.missing)) return false;
-  if (!isValid(option.wrongType)) return false;
-  if (!isValid(option.malformed)) return false;
+  const missing = parseOption(option.missing);
+  const wrongType = parseOption(option.wrongType);
+  const malformed = parseOption(option.malformed);
 
-  return true;
+  return { missing, wrongType, malformed, probability };
+}
+
+export function randomOptionQuery() {
+  return {
+    missing: getRandomTrueOrFalse() ?? false,
+    wrongType: getRandomTrueOrFalse() ?? false,
+    malformed: getRandomTrueOrFalse() ?? false,
+    probability: Math.random(),
+  };
 }
 
 export function getMalformedKey(key: string) {
