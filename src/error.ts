@@ -49,3 +49,12 @@ export class InvalidRangeError extends Error {
     Object.setPrototypeOf(this, InvalidRangeError.prototype);
   }
 }
+
+export class InvalidOptionsError extends Error {
+  constructor(
+    message: string = "Option queries that have been passed is invalid.",
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, InvalidOptionsError);
+  }
+}
