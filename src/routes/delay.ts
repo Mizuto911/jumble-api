@@ -1,6 +1,7 @@
 import express from "express";
 import { schemasCollection } from "../server.js";
 import generateOutputFromSchema from "../SchemaOutput.js";
+import { catchError } from "../middleware/wrapper.js";
 import {
   checkDelayQuery,
   checkSchemaBody,
@@ -9,80 +10,71 @@ import {
 
 const router = express.Router();
 
-router.get("/", checkSchemaInQuery, checkDelayQuery, (req, res) => {
-  const delay = req.delay;
-  const schema = req.schema;
+const delayRes = async (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
-  setTimeout(() => {
-    try {
-      return res.status(200).json({
-        success: true,
-        data: generateOutputFromSchema(schema ?? schemasCollection.default),
-      });
-    } catch (e) {
-      return res.status(400).json({
-        success: false,
-        msg: (e as Error).message,
-      });
-    }
-  }, delay);
-});
+router.get(
+  "/",
+  checkSchemaInQuery,
+  checkDelayQuery,
+  catchError(async (req, res) => {
+    const delay = req.delay;
+    const schema = req.schema;
+    const data = generateOutputFromSchema(schema ?? schemasCollection.default);
 
-router.get("/random", checkSchemaInQuery, (req, res) => {
-  const schema = req.schema;
-  const randomDelay = Math.random() * 30000;
+    await delayRes(delay);
+    return res.status(200).json({
+      success: true,
+      data: data,
+    });
+  }),
+);
 
-  setTimeout(() => {
-    try {
-      return res.status(200).json({
-        success: true,
-        data: generateOutputFromSchema(schema ?? schemasCollection.default),
-      });
-    } catch (e) {
-      return res.status(400).json({
-        success: false,
-        msg: (e as Error).message,
-      });
-    }
-  }, randomDelay);
-});
+router.get(
+  "/random",
+  checkSchemaInQuery,
+  catchError(async (req, res) => {
+    const schema = req.schema;
+    const randomDelay = Math.random() * 30000;
 
-router.post("/", checkSchemaBody, checkDelayQuery, (req, res) => {
-  const schema = req.schema;
-  const delay = req.delay;
+    await delayRes(randomDelay);
+    return res.status(200).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? schemasCollection.default),
+    });
+  }),
+);
 
-  setTimeout(() => {
-    try {
-      return res.status(200).json({
-        success: true,
-        data: generateOutputFromSchema(schema ?? schemasCollection.default),
-      });
-    } catch (e) {
-      return res.status(400).json({
-        success: false,
-        msg: (e as Error).message,
-      });
-    }
-  }, delay);
-});
+router.post(
+  "/",
+  checkSchemaBody,
+  checkDelayQuery,
+  catchError(async (req, res) => {
+    const schema = req.schema;
+    const delay = req.delay;
 
-router.post("/random", checkSchemaBody, (req, res) => {
-  const schema = req.schema;
-  const randomDelay = Math.random() * 30000;
+    await delayRes(delay);
+    return res.status(200).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? schemasCollection.default),
+    });
+  }),
+);
 
-  setTimeout(() => {
-    try {
-      return res.status(200).json({
-        success: true,
-        data: generateOutputFromSchema(schema ?? schemasCollection.default),
-      });
-    } catch (e) {
-      return res.status(400).json({
-        success: false,
-        msg: (e as Error).message,
-      });
-    }
-  }, randomDelay);
-});
+router.post(
+  "/random",
+  checkSchemaBody,
+  catchError(async (req, res) => {
+    const schema = req.schema;
+    const randomDelay = Math.random() * 30000;
+
+    await delayRes(randomDelay);
+
+    return res.status(200).json({
+      success: true,
+      data: generateOutputFromSchema(schema ?? schemasCollection.default),
+    });
+  }),
+);
 
 export default router;

@@ -7,14 +7,17 @@ import {
   checkSchemaBody,
   checkSchemaInQuery,
 } from "../middleware/validator.js";
+import { catchError } from "../middleware/wrapper.js";
 
 const router = express.Router();
 
-router.get("/", checkSchemaInQuery, checkJumbleOptionQuery, (req, res) => {
-  const options = req.options;
-  const schema = req.schema;
-
-  try {
+router.get(
+  "/",
+  checkSchemaInQuery,
+  checkJumbleOptionQuery,
+  catchError((req, res) => {
+    const options = req.options;
+    const schema = req.schema;
     return res.status(200).json({
       success: true,
       data: generateOutputFromSchema(
@@ -22,19 +25,16 @@ router.get("/", checkSchemaInQuery, checkJumbleOptionQuery, (req, res) => {
         options,
       ),
     });
-  } catch (e) {
-    return res.status(400).json({
-      success: false,
-      msg: (e as Error).message,
-    });
-  }
-});
+  }),
+);
 
-router.post("/", checkSchemaBody, checkJumbleOptionQuery, (req, res) => {
-  const schema = req.schema;
-  const options = req.options;
-
-  try {
+router.post(
+  "/",
+  checkSchemaBody,
+  checkJumbleOptionQuery,
+  catchError((req, res) => {
+    const schema = req.schema;
+    const options = req.options;
     return res.status(200).json({
       success: true,
       data: generateOutputFromSchema(
@@ -42,19 +42,15 @@ router.post("/", checkSchemaBody, checkJumbleOptionQuery, (req, res) => {
         options,
       ),
     });
-  } catch (e) {
-    return res.status(400).json({
-      success: false,
-      msg: (e as Error).message,
-    });
-  }
-});
+  }),
+);
 
-router.get("/random", checkSchemaInQuery, (req, res) => {
-  const schema = req.schema;
-  const options = randomOptionQuery();
-
-  try {
+router.get(
+  "/random",
+  checkSchemaInQuery,
+  catchError((req, res) => {
+    const schema = req.schema;
+    const options = randomOptionQuery();
     return res.status(200).json({
       success: true,
       data: generateOutputFromSchema(
@@ -62,19 +58,15 @@ router.get("/random", checkSchemaInQuery, (req, res) => {
         options,
       ),
     });
-  } catch (e) {
-    return res.status(400).json({
-      success: false,
-      msg: (e as Error).message,
-    });
-  }
-});
+  }),
+);
 
-router.post("/random", checkSchemaBody, (req, res) => {
-  const schema = req.schema;
-  const options = randomOptionQuery();
-
-  try {
+router.post(
+  "/random",
+  checkSchemaBody,
+  catchError((req, res) => {
+    const schema = req.schema;
+    const options = randomOptionQuery();
     return res.status(200).json({
       success: true,
       data: generateOutputFromSchema(
@@ -82,12 +74,7 @@ router.post("/random", checkSchemaBody, (req, res) => {
         options,
       ),
     });
-  } catch (e) {
-    return res.status(400).json({
-      success: false,
-      msg: (e as Error).message,
-    });
-  }
-});
+  }),
+);
 
 export default router;
