@@ -37,7 +37,7 @@ export class SchemaDirNotExistError extends Error {
 export class MalformedSchemaError extends Error {
   constructor(message: string = "The schema has malformed format.") {
     super(message);
-    Object.setPrototypeOf(this, SchemaDirNotExistError.prototype);
+    Object.setPrototypeOf(this, MalformedSchemaError.prototype);
   }
 }
 
@@ -55,6 +55,6 @@ export class InvalidOptionsError extends Error {
     message: string = "Option queries that have been passed is invalid.",
   ) {
     super(message);
-    Object.setPrototypeOf(this, InvalidOptionsError);
+    Object.setPrototypeOf(this, InvalidOptionsError.prototype);
   }
 }
