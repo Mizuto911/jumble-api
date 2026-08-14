@@ -4,35 +4,27 @@ import {
   getRandomTrueOrFalse,
 } from "./utilities.js";
 import {
-  FormatDeclarationError,
   NullSchemaElementError,
-  NullPickFromArrayError,
   InvalidRangeError,
+  FormatDeclarationError,
+  NullPickFromArrayError,
 } from "./error.js";
 import { faker } from "@faker-js/faker";
 
-// TODO: Refactor Redundant Functions
-
 export default function generateDataFromSchemaElement(
   schemaElement: SchemaElement,
-  wrongType?: boolean,
 ) {
   if (!schemaElement) throw new NullSchemaElementError();
-  if (wrongType) {
-    return generateWrongType(
-      typeof schemaElement === "object" && schemaElement.format
-        ? schemaElement.format
-        : typeof schemaElement === "string"
-          ? schemaElement
-          : undefined,
-    );
-  }
 
   let data;
   let arrayLength: number;
-  const hasPickFrom = checkValidProperties(schemaElement);
 
   if (typeof schemaElement === "object") {
+    if (
+      schemaElement.format === undefined &&
+      schemaElement.pickFrom === undefined
+    )
+      throw new FormatDeclarationError();
     if (schemaElement.array) {
       data = [];
       if (typeof schemaElement.array === "number")
@@ -45,24 +37,12 @@ export default function generateDataFromSchemaElement(
       else throw new InvalidRangeError();
 
       for (let i = 0; i < arrayLength; i++) {
-        data[i] = generateData(schemaElement, hasPickFrom);
+        data[i] = generateData(schemaElement);
       }
-    } else {
-      data = generateData(schemaElement, hasPickFrom);
-    }
-  } else {
-    data = generateData(schemaElement, hasPickFrom);
-  }
+    } else data = generateData(schemaElement);
+  } else data = generateData(schemaElement);
 
   return data;
-}
-
-function checkValidProperties(schemaElement: SchemaElement) {
-  if (!schemaElement) throw new NullSchemaElementError();
-  if (typeof schemaElement !== "object") return false;
-  else if (!schemaElement.format && !schemaElement.pickFrom)
-    throw new FormatDeclarationError();
-  else return !!schemaElement.pickFrom;
 }
 
 function generateFormat(
@@ -72,7 +52,7 @@ function generateFormat(
 ) {
   switch (format) {
     case "string":
-      return faker.lorem.words({ min: min ?? 0, max: max ?? 10 });
+      return faker.lorem.words({ min: min ?? 1, max: max ?? 10 });
     case "number":
       return faker.number.int({ min: min ?? 0, max: max ?? 99999999999999 });
     case "boolean":
@@ -117,38 +97,38 @@ function generateFormat(
   }
 }
 
-function generatePickFrom(pickFrom: PickFrom | undefined) {
-  if (!pickFrom) throw new NullPickFromArrayError(`${pickFrom}`);
+function generatePickFrom(pickFrom: PickFrom) {
+  if (pickFrom.length === 0) throw new NullPickFromArrayError();
   return getRandomArrayElement(pickFrom);
 }
 
-function getSchemaElementFormat(
-  schemaElement: SchemaElementFormat,
-): PrimaryTypes | MockTypes {
-  if (!schemaElement.format) throw new FormatDeclarationError();
-  return schemaElement.format;
-}
-
-function generateData(schemaElement: SchemaElement, hasPickFrom: boolean) {
+function generateData(schemaElement: SchemaElement) {
   if (!schemaElement) throw new NullSchemaElementError();
-  if (typeof schemaElement === "object") {
-    if (hasPickFrom && schemaElement.pickFrom) {
+  if (typeof schemaElement === "string") {
+    return generateFormat(schemaElement);
+  } else {
+    if (schemaElement.pickFrom) {
       return generatePickFrom(schemaElement.pickFrom);
     }
-    return generateFormat(
-      getSchemaElementFormat(schemaElement),
-      schemaElement.min,
-      schemaElement.max,
-    );
+    if (schemaElement.format !== undefined)
+      return generateFormat(
+        schemaElement.format,
+        schemaElement.min,
+        schemaElement.max,
+      );
   }
-
-  return generateFormat(schemaElement as PrimaryTypes | MockTypes);
 }
 
-function generateWrongType(type: string | undefined) {
-  const currentTypes: PrimaryTypes[] = ["string", "boolean", "date", "number"];
-  if (!type) return generateData(getRandomArrayElement(currentTypes), false);
-  const currentIndex = currentTypes.findIndex((ctype) => ctype === type);
-  if (currentIndex !== -1) currentTypes.splice(currentIndex, 1);
-  return generateData(getRandomArrayElement(currentTypes), false);
+export function generateWrongType(schemaElement: SchemaElement) {
+  const type =
+    typeof schemaElement === "object" && schemaElement.format
+      ? schemaElement.format
+      : typeof schemaElement === "string"
+        ? schemaElement
+        : undefined;
+
+  let currentTypes: PrimaryTypes[] = ["string", "boolean", "date", "number"];
+  if (!type) return generateData(getRandomArrayElement(currentTypes));
+  currentTypes = currentTypes.filter((ctype) => ctype !== type);
+  return generateData(getRandomArrayElement(currentTypes));
 }
