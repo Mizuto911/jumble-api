@@ -38,10 +38,9 @@ type MockTypes =
   | "color"
   | "zipcode"
   | "currency"
-  | "uuid"
-  | null;
+  | "uuid";
 
-type PickFrom = Array<string | number | boolean> | null;
+type PickFrom = Array<string | number | boolean>;
 
 type ArrayLength =
   | number
