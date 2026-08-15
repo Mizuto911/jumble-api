@@ -3,7 +3,7 @@ import {
   getRandomArrayElement,
   getMalformedKey,
 } from "./utilities.js";
-import generateDataFromSchemaElement from "./datagen.js";
+import generateDataFromSchemaElement, { generateWrongType } from "./datagen.js";
 import { MalformedSchemaError, InvalidRangeError } from "./error.js";
 
 export default function generateOutputFromSchema(
@@ -43,7 +43,7 @@ function isSchemaWrapper(
   );
 }
 
-function getSchemaProperties(schema: Schema): SchemaProperties {
+function getSchemaProperties(schema: Schema) {
   return isSchemaWrapper(schema) ? schema.properties : schema;
 }
 
@@ -157,14 +157,14 @@ function generateOutput(
   for (let key of keys) {
     const schemaElement = schemaProperties[key];
     const isSchemaElement = validateSchemaElement(schemaElement);
-
     if (changes[key] === "missing") continue;
+
     if (isSchemaElement) {
-      outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
-        generateDataFromSchemaElement(
-          schemaElement,
-          changes[key] === "wrongType",
-        );
+      if (changes[key] === "wrongType")
+        outputRef[key] = generateWrongType(schemaElement);
+      else
+        outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
+          generateDataFromSchemaElement(schemaElement);
     } else if (typeof schemaElement === "object") {
       outputRef[changes[key] === "malformed" ? getMalformedKey(key) : key] =
         generateOutputFromSchema(schemaElement, options);
