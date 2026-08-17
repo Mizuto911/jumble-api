@@ -4,7 +4,7 @@ import invalidSchema from "./testing_schemas/invalidSchema.js";
 import createApp from "../server.js";
 import request from "supertest";
 
-const app = createApp(3030, testSchemas);
+const app = createApp(testSchemas);
 
 describe("GET /api/jumble", () => {
   describe("given options passed in the query", () => {

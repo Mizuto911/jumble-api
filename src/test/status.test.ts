@@ -5,7 +5,7 @@ import invalidSchema from "./testing_schemas/invalidSchema.js";
 import { describe, it, expect } from "vitest";
 import { STATUS_CODES } from "node:http";
 
-const app = createApp(3030, testSchemas);
+const app = createApp(testSchemas);
 const statusCodes = Object.keys(STATUS_CODES);
 const specialStatusCodes = [100, 101, 102, 103, 204, 205, 304];
 

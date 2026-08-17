@@ -4,7 +4,7 @@ import invalidSchema from "./testing_schemas/invalidSchema.js";
 import request from "supertest";
 import { describe, it, expect } from "vitest";
 
-const app = createApp(3030, testSchemas);
+const app = createApp(testSchemas);
 
 describe("GET /api/schema", () => {
   it("should respond with 200 status code and return all the schema in the collection", async () => {

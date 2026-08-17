@@ -8,14 +8,15 @@ import SchemasCollection from "./SchemasCollection.js";
 
 export let schemasCollection: SchemasCollection;
 
-export default function createApp(port: number, schemas?: SchemaCollection) {
+export default function createApp(schemas?: SchemaCollection) {
   schemasCollection = new SchemasCollection(schemas);
 
   const app = express();
 
   app.use(
     cors({
-      origin: `http://localhost:${port}`,
+      origin: "*",
+      credentials: true,
       optionsSuccessStatus: 200,
     }),
   );

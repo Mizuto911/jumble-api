@@ -6,7 +6,7 @@ import { describe, it, expect, vi } from "vitest";
 
 vi.setConfig({ testTimeout: 8000 });
 
-const app = createApp(3030, testSchemas);
+const app = createApp(testSchemas);
 
 describe("GET /api/delay", () => {
   describe("given that no value, unit, and schemaID is passed in the query", () => {
