@@ -9,7 +9,7 @@ import {
   FormatDeclarationError,
   NullPickFromArrayError,
 } from "./error.js";
-import { faker } from "@faker-js/faker";
+import FormatDataGenerator from "./format-data-generator.js";
 
 export default function generateDataFromSchemaElement(
   schemaElement: SchemaElement,
@@ -47,54 +47,22 @@ export default function generateDataFromSchemaElement(
 
 function generateFormat(
   format: MockTypes | PrimaryTypes,
-  min?: number | null,
-  max?: number | null,
+  min?: number | string | null,
+  max?: number | string | null,
 ) {
-  switch (format) {
-    case "string":
-      return faker.lorem.words({ min: min ?? 1, max: max ?? 10 });
-    case "number":
-      return faker.number.int({ min: min ?? 0, max: max ?? 99999999999999 });
-    case "boolean":
-      return getRandomTrueOrFalse();
-    case "date":
-      return faker.date.between({
-        from: min ?? new Date().getTime() - 157788000000, // 5 years before now
-        to: max ?? new Date().getTime() + 157788000000, // 5 years after now
-      });
-    case "sex":
-      return faker.person.sex();
-    case "fullname":
-      return faker.person.fullName();
-    case "firstname":
-      return faker.person.firstName();
-    case "lastname":
-      return faker.person.lastName();
-    case "email":
-      return faker.internet.email();
-    case "phone":
-      return `09${faker.string.numeric(9)}`;
-    case "url":
-      return faker.internet.url();
-    case "imageUrl":
-      return faker.image.urlPicsumPhotos();
-    case "avatarUrl":
-      return faker.image.avatar();
-    case "portrait":
-      return faker.image.personPortrait();
-    case "countryCode":
-      return faker.location.countryCode();
-    case "address":
-      return `${faker.location.streetAddress()}, ${faker.location.state()}, ${faker.location.country()}`;
-    case "color":
-      return faker.color.rgb();
-    case "zipcode":
-      return faker.location.zipCode();
-    case "currency":
-      return faker.finance.currencyCode();
-    case "uuid":
-      return faker.string.uuid();
-  }
+  const minExist = min != null;
+  const maxExist = max != null;
+
+  if (
+    minExist &&
+    maxExist &&
+    typeof min === "number" &&
+    typeof max === "number" &&
+    min > max
+  )
+    throw new InvalidRangeError();
+
+  return FormatDataGenerator[format](min, max);
 }
 
 function generatePickFrom(pickFrom: PickFrom) {
