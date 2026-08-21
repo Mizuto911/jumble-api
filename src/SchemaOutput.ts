@@ -47,32 +47,15 @@ function getSchemaProperties(schema: Schema) {
   return isSchemaWrapper(schema) ? schema.properties : schema;
 }
 
-function validateSchemaElement(
+function isSchemaElement(
   schemaElement: Schema | SchemaElement | undefined,
 ): schemaElement is SchemaElement {
-  let isSchemaElement = false;
-
-  if (
+  return (
     (schemaElement &&
       typeof schemaElement === "object" &&
       !("properties" in schemaElement)) ||
     typeof schemaElement === "string"
-  ) {
-    isSchemaElement = true;
-    if (
-      typeof schemaElement === "object" &&
-      "format" in schemaElement &&
-      schemaElement.min !== undefined &&
-      schemaElement.min !== null &&
-      schemaElement.max !== undefined &&
-      schemaElement.max !== null &&
-      schemaElement.min > schemaElement.max
-    ) {
-      throw new InvalidRangeError();
-    }
-  }
-
-  return isSchemaElement;
+  );
 }
 
 function selectKeys(keys: string[], changesAmount: number) {
@@ -156,10 +139,9 @@ function generateOutput(
 
   for (let key of keys) {
     const schemaElement = schemaProperties[key];
-    const isSchemaElement = validateSchemaElement(schemaElement);
     if (changes[key] === "missing") continue;
 
-    if (isSchemaElement) {
+    if (isSchemaElement(schemaElement)) {
       if (changes[key] === "wrongType")
         outputRef[key] = generateWrongType(schemaElement);
       else
