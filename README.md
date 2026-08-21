@@ -6,7 +6,7 @@
     alt="JumbleAPI Logo"
     width="300"  
   >
-  <h3 align="center" style="font-size: 2.5rem;">JumbleAPI</h3>
+  <h3 align="center" style="font-size: 3rem;">JumbleAPI</h3>
   <p align="center" style="margin-top: none;">Break your frontend before your users do.</p>
   <a href="https://github.com/Mizuto911/jumble-api/issues/new?template=bug_report.md&labels=bug">Report Bug</a> • <a href="https://github.com/Mizuto911/jumble-api/issues/new?template=feature_request.md&labels=enhancement">Request Feature</a>
   <br><br>
