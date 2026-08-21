@@ -9,7 +9,7 @@ import {
   FormatDeclarationError,
   NullPickFromArrayError,
 } from "./error.js";
-import FormatDataGenerator from "./format-data-generator.js";
+import FormatDataGenerator from "./formatDataGenerator.js";
 
 export default function generateDataFromSchemaElement(
   schemaElement: SchemaElement,
