@@ -58,3 +58,12 @@ export class InvalidOptionsError extends Error {
     Object.setPrototypeOf(this, InvalidOptionsError.prototype);
   }
 }
+
+export class InvalidDateStringError extends Error {
+  constructor(
+    message: string = "ISO string provided in the date format is invalid.",
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, InvalidDateStringError.prototype);
+  }
+}
