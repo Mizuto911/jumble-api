@@ -21,7 +21,8 @@
     "jumble-api": "./dist/app.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "assets"
   ],
   "keywords": [
     "jumble",
