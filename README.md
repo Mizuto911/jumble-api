@@ -2,7 +2,7 @@
 
 <div align="center">
   <img 
-    src="./assets/app-logo.png"
+    src="https://raw.githubusercontent.com/Mizuto911/jumble-api/main/assets/app-logo.png"
     alt="JumbleAPI Logo"
     width="300"  
   >
