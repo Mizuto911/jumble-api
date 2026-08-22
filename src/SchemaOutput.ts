@@ -14,7 +14,7 @@ export default function generateOutputFromSchema(
   let output: SchemaOutput = {};
   const arrayLength = schema.array as ArrayLength;
 
-  if (arrayLength) {
+  if (arrayLength != null) {
     output = [];
     let itemAmount;
     if (typeof arrayLength === "number") itemAmount = arrayLength;

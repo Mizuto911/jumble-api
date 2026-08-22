@@ -25,7 +25,7 @@ export default function generateDataFromSchemaElement(
       schemaElement.pickFrom === undefined
     )
       throw new FormatDeclarationError();
-    if (schemaElement.array) {
+    if (schemaElement.array != null) {
       data = [];
       if (typeof schemaElement.array === "number")
         arrayLength = schemaElement.array;
