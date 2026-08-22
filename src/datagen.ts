@@ -5,11 +5,11 @@ import {
 } from "./utilities.js";
 import {
   NullSchemaElementError,
-  InvalidRangeError,
   FormatDeclarationError,
   NullPickFromArrayError,
 } from "./error.js";
 import FormatDataGenerator from "./formatDataGenerator.js";
+import { validateRange } from "./utilities.js";
 
 export default function generateDataFromSchemaElement(
   schemaElement: SchemaElement,
@@ -29,12 +29,13 @@ export default function generateDataFromSchemaElement(
       data = [];
       if (typeof schemaElement.array === "number")
         arrayLength = schemaElement.array;
-      else if (schemaElement.array.min < schemaElement.array.max)
+      else {
+        validateRange(schemaElement.array.min, schemaElement.array.max);
         arrayLength = generateRandomAmount(
           schemaElement.array.min,
           schemaElement.array.max,
         );
-      else throw new InvalidRangeError();
+      }
 
       for (let i = 0; i < arrayLength; i++) {
         data[i] = generateData(schemaElement);

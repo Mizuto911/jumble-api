@@ -54,8 +54,8 @@ type SchemaElementFormat = {
   array?: ArrayLength;
   format?: PrimaryTypes | MockTypes;
   pickFrom?: PickFrom | null;
-  min?: number | null;
-  max?: number | null;
+  min?: number | string | null;
+  max?: number | string | null;
 };
 
 type SchemaElement = PrimaryTypes | MockTypes | SchemaElementFormat;

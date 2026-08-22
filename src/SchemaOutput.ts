@@ -2,9 +2,10 @@ import {
   generateRandomAmount,
   getRandomArrayElement,
   getMalformedKey,
+  validateRange,
 } from "./utilities.js";
 import generateDataFromSchemaElement, { generateWrongType } from "./datagen.js";
-import { MalformedSchemaError, InvalidRangeError } from "./error.js";
+import { MalformedSchemaError } from "./error.js";
 
 export default function generateOutputFromSchema(
   schema: Schema,
@@ -17,9 +18,10 @@ export default function generateOutputFromSchema(
     output = [];
     let itemAmount;
     if (typeof arrayLength === "number") itemAmount = arrayLength;
-    else if (arrayLength.min < arrayLength.max)
+    else {
+      validateRange(arrayLength.min, arrayLength.max);
       itemAmount = generateRandomAmount(arrayLength.min, arrayLength.max);
-    else throw new InvalidRangeError();
+    }
 
     for (let i = 0; i < itemAmount; i++) {
       generateOutput(schema, output, true, options, i);
@@ -67,11 +69,10 @@ function validateSchemaElement(
     if (
       typeof schemaElement === "object" &&
       typeof schemaElement.min === "number" &&
-      typeof schemaElement.max === "number" &&
-      schemaElement.min > schemaElement.max
-    )
-      throw new InvalidRangeError();
-    else if (
+      typeof schemaElement.max === "number"
+    ) {
+      validateRange(schemaElement.min, schemaElement.max);
+    } else if (
       typeof schemaElement === "object" &&
       schemaElement.format === "date" &&
       schemaElement.min != null &&
@@ -79,11 +80,14 @@ function validateSchemaElement(
       (typeof schemaElement.min === "number" ||
         typeof schemaElement.min === "string") &&
       (typeof schemaElement.max === "number" ||
-        typeof schemaElement.max === "string") &&
-      new Date(schemaElement.min).getTime() >
-        new Date(schemaElement.max).getTime()
-    )
-      throw new InvalidRangeError();
+        typeof schemaElement.max === "string")
+    ) {
+      validateRange(
+        schemaElement.min,
+        schemaElement.max,
+        (min, max) => new Date(min).getTime() > new Date(max).getTime(),
+      );
+    }
   }
 
   return isSchemaElement;

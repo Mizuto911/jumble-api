@@ -1,5 +1,5 @@
 import { STATUS_CODES } from "node:http";
-import { InvalidOptionsError } from "./error.js";
+import { InvalidOptionsError, InvalidRangeError } from "./error.js";
 
 export function convertDelayValueToMS(value: number, units: Units) {
   const conversionRates: Record<Units, number> = {
@@ -66,6 +66,16 @@ function getRandomLetter() {
 
 export function generateRandomAmount(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function validateRange<T>(
+  min: T | null | undefined,
+  max: T | null | undefined,
+  isReversed: (min: T, max: T) => boolean = (min, max) =>
+    Number(min) > Number(max),
+) {
+  if (min != null && max != null && isReversed(min, max))
+    throw new InvalidRangeError();
 }
 
 export function getRandomArrayElement(array: Array<any>) {
