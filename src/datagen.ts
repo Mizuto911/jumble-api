@@ -50,18 +50,6 @@ function generateFormat(
   min?: number | string | null,
   max?: number | string | null,
 ) {
-  const minExist = min != null;
-  const maxExist = max != null;
-
-  if (
-    minExist &&
-    maxExist &&
-    typeof min === "number" &&
-    typeof max === "number" &&
-    min > max
-  )
-    throw new InvalidRangeError();
-
   return FormatDataGenerator[format](min, max);
 }
 

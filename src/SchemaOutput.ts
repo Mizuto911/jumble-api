@@ -69,9 +69,21 @@ function validateSchemaElement(
       typeof schemaElement.min === "number" &&
       typeof schemaElement.max === "number" &&
       schemaElement.min > schemaElement.max
-    ) {
+    )
       throw new InvalidRangeError();
-    }
+    else if (
+      typeof schemaElement === "object" &&
+      schemaElement.format === "date" &&
+      schemaElement.min != null &&
+      schemaElement.max != null &&
+      (typeof schemaElement.min === "number" ||
+        typeof schemaElement.min === "string") &&
+      (typeof schemaElement.max === "number" ||
+        typeof schemaElement.max === "string") &&
+      new Date(schemaElement.min).getTime() >
+        new Date(schemaElement.max).getTime()
+    )
+      throw new InvalidRangeError();
   }
 
   return isSchemaElement;
