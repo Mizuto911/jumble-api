@@ -47,15 +47,34 @@ function getSchemaProperties(schema: Schema) {
   return isSchemaWrapper(schema) ? schema.properties : schema;
 }
 
-function isSchemaElement(
+/* 
+  min and max check has to be done before data generation,
+  otherwise the min and max check will be ignored when mutation is 'missing'.
+*/
+function validateSchemaElement(
   schemaElement: Schema | SchemaElement | undefined,
 ): schemaElement is SchemaElement {
-  return (
+  let isSchemaElement = false;
+
+  if (
     (schemaElement &&
       typeof schemaElement === "object" &&
       !("properties" in schemaElement)) ||
     typeof schemaElement === "string"
-  );
+  ) {
+    isSchemaElement = true;
+
+    if (
+      typeof schemaElement === "object" &&
+      typeof schemaElement.min === "number" &&
+      typeof schemaElement.max === "number" &&
+      schemaElement.min > schemaElement.max
+    ) {
+      throw new InvalidRangeError();
+    }
+  }
+
+  return isSchemaElement;
 }
 
 function selectKeys(keys: string[], changesAmount: number) {
@@ -139,9 +158,10 @@ function generateOutput(
 
   for (let key of keys) {
     const schemaElement = schemaProperties[key];
+    const isSchemaElement = validateSchemaElement(schemaElement); // min max check before mutation
     if (changes[key] === "missing") continue;
 
-    if (isSchemaElement(schemaElement)) {
+    if (isSchemaElement) {
       if (changes[key] === "wrongType")
         outputRef[key] = generateWrongType(schemaElement);
       else
