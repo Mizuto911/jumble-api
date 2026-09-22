@@ -238,8 +238,8 @@ _The `properties` key is a reserved keyword for declaring an object._
   "name": "fullname",
   "gender": "sex",
   "nestedObject": {
+    // Declares Nested Object
     "properties": {
-      // Declares Nested Object
       "nestedString": "string",
       "nestedNumber": "number"
     }
