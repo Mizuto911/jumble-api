@@ -1,6 +1,6 @@
 {
   "name": "jumble-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight mock server for custom delays, HTTP status codes, and mutated JSON schemas.",
   "main": "./dist/app.js",
   "types": "./dist/app.d.ts",
